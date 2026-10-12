@@ -62,10 +62,10 @@
 
     .stack-group { margin-bottom: 36px; }
     .stack-group h3 { color: var(--muted); font-size: .9rem; font-weight: 500; margin-bottom: 14px; }
-    .stack { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
-    .chip { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 14px 16px; display: flex; align-items: center; gap: 12px; font-weight: 500; transition: transform .2s, border-color .2s; }
+    .stack { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 12px; }
+    .chip { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 18px; display: flex; align-items: center; gap: 12px; font-weight: 500; white-space: nowrap; transition: transform .2s, border-color .2s; }
     .chip:hover { transform: translateY(-3px); border-color: var(--blue); }
-    .chip img { width: 30px; height: 30px; border-radius: 6px; }
+    .chip img { width: 36px; height: 36px; border-radius: 6px; }
     .main .chip { padding: 20px; font-size: 1.05rem; }
     .main .chip img { width: 40px; height: 40px; }
 
@@ -141,18 +141,11 @@
     <section id="stack" class="reveal">
       <span class="eyebrow">Tech stack</span>
       <h2>The tools I <span class="grad">ship with.</span></h2>
-      <div class="stack-group main">
-        <h3>Main focus</h3>
-        <div class="stack">
+      <div class="stack">
           <div class="chip"><img src="https://skillicons.dev/icons?i=python" alt="" />Python</div>
           <div class="chip"><img src="https://skillicons.dev/icons?i=fastapi" alt="" />FastAPI</div>
           <div class="chip"><img src="https://skillicons.dev/icons?i=ts" alt="" />TypeScript</div>
           <div class="chip"><img src="https://skillicons.dev/icons?i=vue" alt="" />Vue.js</div>
-        </div>
-      </div>
-      <div class="stack-group">
-        <h3>Data &amp; infrastructure</h3>
-        <div class="stack">
           <div class="chip"><img src="https://raw.githubusercontent.com/Hitsu-360/Hitsu-360/main/assets/snowflake.svg" alt="" />Snowflake</div>
           <div class="chip"><img src="https://raw.githubusercontent.com/Hitsu-360/Hitsu-360/main/assets/dbt.svg" alt="" />dbt</div>
           <div class="chip"><img src="https://skillicons.dev/icons?i=gcp" alt="" />BigQuery</div>
@@ -162,7 +155,6 @@
           <div class="chip"><img src="https://skillicons.dev/icons?i=githubactions" alt="" />GitHub Actions</div>
           <div class="chip"><img src="https://skillicons.dev/icons?i=git" alt="" />Git</div>
         </div>
-      </div>
     </section>
 
     <section id="experience" class="reveal">
