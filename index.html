@@ -30,7 +30,7 @@
     .pill { display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; border: 1px solid var(--border); border-radius: 999px; background: var(--surface); font-size: .85rem; color: var(--muted); backdrop-filter: blur(8px); width: fit-content; }
     .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 0 var(--green); animation: pulse 2s infinite; }
     @keyframes pulse { 70% { box-shadow: 0 0 0 10px transparent; } 100% { box-shadow: 0 0 0 0 transparent; } }
-    .hero h1 { font-size: clamp(2.6rem, 7.5vw, 5.4rem); line-height: 1.02; font-weight: 800; letter-spacing: -.03em; margin: 24px 0; }
+    .hero h1 { font-size: clamp(2.4rem, 6vw, 4.4rem); line-height: 1.02; font-weight: 800; letter-spacing: -.03em; margin: 24px 0; }
     .hero .lead { font-size: clamp(1.05rem, 2.2vw, 1.3rem); color: var(--muted); max-width: 640px; }
     .hero .lead strong { color: var(--text); font-weight: 600; }
     .typed { font-family: "JetBrains Mono", monospace; color: var(--green); }
@@ -45,6 +45,12 @@
     .stat { border-left: 2px solid var(--green); padding-left: 16px; }
     .stat b { display: block; font-size: clamp(1.6rem, 4vw, 2.2rem); font-weight: 800; }
     .stat span { color: var(--muted); font-size: .9rem; }
+    .hero-grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 48px; align-items: center; }
+    .photo { position: relative; justify-self: center; width: min(360px, 80vw); aspect-ratio: 1; }
+    .photo::before { content: ""; position: absolute; inset: -10px; border-radius: 50%; background: conic-gradient(from 0deg, var(--violet), var(--green), var(--blue), transparent 70%, var(--violet)); animation: spin 10s linear infinite; }
+    .photo::after { content: ""; position: absolute; inset: -40px; border-radius: 50%; background: radial-gradient(circle, rgba(250,204,21,.25), transparent 65%); z-index: -1; }
+    .photo img { position: relative; width: 100%; height: 100%; object-fit: cover; border-radius: 50%; border: 6px solid var(--bg); }
+    @keyframes spin { to { transform: rotate(360deg); } }
     .scroll { position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%); color: var(--muted); font-size: .8rem; letter-spacing: .2em; }
 
     /* Sections */
@@ -88,9 +94,10 @@
 
     .reveal { opacity: 0; transform: translateY(24px); transition: opacity .7s ease, transform .7s ease; }
     .reveal.in { opacity: 1; transform: none; }
-    @media (prefers-reduced-motion: reduce) { .blob, .dot, .typed::after { animation: none; } .reveal { opacity: 1; transform: none; transition: none; } html { scroll-behavior: auto; } }
+    @media (prefers-reduced-motion: reduce) { .blob, .dot, .typed::after, .photo::before { animation: none; } .reveal { opacity: 1; transform: none; transition: none; } html { scroll-behavior: auto; } }
     @media (max-width: 760px) {
-      .about { grid-template-columns: 1fr; }
+      .about, .hero-grid { grid-template-columns: 1fr; }
+      .photo { order: -1; width: 200px; }
       .job { grid-template-columns: 1fr; gap: 8px; padding: 22px; }
       .stats { grid-template-columns: 1fr; gap: 18px; margin-top: 44px; }
       section { padding: 72px 0; }
@@ -102,7 +109,8 @@
   <header class="hero">
     <div class="gridbg"></div>
     <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
-    <div class="wrap">
+    <div class="wrap hero-grid">
+      <div>
       <span class="pill"><span class="dot"></span>Software Engineer · Brasília, Brazil</span>
       <h1>I build software that's <span class="grad">simple to use</span><br />and <span class="grad">built to last.</span></h1>
       <p class="lead">Hi, I'm <strong>Leandro Cavalcanti</strong>, a software engineer with a data engineering background. I turn complex problems into intuitive products, <span class="typed" id="typed">fast.</span></p>
@@ -115,6 +123,8 @@
         <div class="stat"><b>Full stack</b><span>from UI to data platform</span></div>
         <div class="stat"><b>AI-powered</b><span>development &amp; delivery</span></div>
       </div>
+      </div>
+      <div class="photo"><img src="assets/leandro.png" alt="Leandro Cavalcanti" /></div>
     </div>
     <a class="scroll" href="#about">SCROLL ↓</a>
   </header>
