@@ -428,7 +428,7 @@
         music.start(total / 1000);
       }
 
-      // Generated lo-fi soundtrack (Web Audio): jazzy Rhodes-like chords, dusty swung beat, vinyl crackle and tape wobble.
+      // Generated lo-fi soundtrack (Web Audio): jazzy Rhodes-like chords, bouncy swung beat and a light tape wobble.
       const music = (() => {
         let ctx, master;
         const hz = m => 440 * Math.pow(2, (m - 69) / 12);
@@ -461,18 +461,14 @@
             ctx.resume();
             if (master) { master.gain.cancelScheduledValues(ctx.currentTime); master.gain.setTargetAtTime(0, ctx.currentTime, .05); setTimeout(m => m.disconnect(), 300, master); }
             master = ctx.createGain(); master.gain.value = muted ? 0 : .35;
-            const tone = ctx.createBiquadFilter(); tone.type = 'lowpass'; tone.frequency.value = 2200; tone.Q.value = .4;
+            const tone = ctx.createBiquadFilter(); tone.type = 'lowpass'; tone.frequency.value = 3800; tone.Q.value = .4;
             master.connect(tone).connect(ctx.destination);
-            const t0 = ctx.currentTime + .05, beat = 60 / 78, bars = Math.ceil(dur / (beat * 4)), end = t0 + dur;
+            const t0 = ctx.currentTime + .05, beat = 60 / 96, bars = Math.ceil(dur / (beat * 4)), end = t0 + dur;
             // Tape wobble: slow pitch drift shared by every keys note.
             const lfo = ctx.createOscillator(), depth = ctx.createGain();
             lfo.frequency.value = .5; depth.gain.value = 9; lfo.connect(depth); wow = depth; lfo.start(t0); lfo.stop(end + 1);
             const noise = ctx.createBuffer(1, ctx.sampleRate * .3, ctx.sampleRate), d = noise.getChannelData(0);
             for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
-            // Vinyl crackle: hiss bed plus random pops.
-            const len = Math.ceil(dur + 1), vinyl = ctx.createBuffer(1, ctx.sampleRate * len, ctx.sampleRate), v = vinyl.getChannelData(0);
-            for (let i = 0; i < v.length; i++) v[i] = (Math.random() * 2 - 1) * .012 + (Math.random() < .0004 ? (Math.random() * 2 - 1) * .5 : 0);
-            const vs = ctx.createBufferSource(); vs.buffer = vinyl; vs.connect(master); vs.start(t0); vs.stop(end + .5);
             const swing = beat / 2 * .62;
             for (let b = 0; b < bars; b++) {
               const t = t0 + b * beat * 4, ch = chords[b % 4];
@@ -480,15 +476,17 @@
               ch.forEach((n, i) => keys(hz(n), t + i * .025 + Math.random() * .01, beat * 3.8, .05));
               keys(hz(ch[0] - 12), t, beat * 2, .14);
               keys(hz(ch[2] - 12), t + beat * 2.5, beat * 1.4, .1);
-              if (b % 2 === 1) [ch[4] + 12, ch[3] + 12, ch[2] + 12].forEach((n, i) => keys(hz(n), t + beat * (1.5 + i * .75), beat, .035));
+              // Melody on every bar once the beat is in, alternating up and down runs.
+              if (b >= 1) (b % 2 ? [ch[4], ch[3], ch[2], ch[3]] : [ch[2], ch[3], ch[4], ch[3] + 2]).forEach((n, i) => keys(hz(n + 12), t + beat * (1 + i * .5) + (i % 2 ? swing - beat / 2 : 0), beat * .6, .04));
               if (b < 1) continue;
               for (let k = 0; k < 4; k++) {
                 const tb = t + k * beat + (Math.random() - .5) * .012;
                 if (k === 0 || (k === 2 && b % 2)) kick(tb);
                 if (k === 2 && !(b % 2)) kick(tb + swing);
                 if (k === 1 || k === 3) noiseHit(tb, noise, 'bandpass', 1800, .16, .18);
-                noiseHit(tb, noise, 'highpass', 6000, .035, .04);
-                noiseHit(tb + swing, noise, 'highpass', 6000, .025, .04);
+                if (k === 3) kick(tb + swing);
+                noiseHit(tb, noise, 'highpass', 7000, .05, .04);
+                noiseHit(tb + swing, noise, 'highpass', 7000, .04, .04);
               }
             }
             master.gain.setValueAtTime(muted ? 0 : .35, end - 2.5); master.gain.linearRampToValueAtTime(0, end);
