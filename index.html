@@ -4,136 +4,242 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Leandro Cavalcanti — Software Engineer</title>
-  <meta name="description" content="Leandro Cavalcanti, Software Engineer working with Python, FastAPI, TypeScript and Vue.js." />
+  <meta name="description" content="Software engineer with a data engineering background. Simple, intuitive products on top of robust platforms." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --bg: #0b1120; --surface: #111a2e; --border: #1e293b;
-      --text: #e2e8f0; --muted: #94a3b8; --accent: #42b883; --accent2: #3b82f6;
-    }
-    @media (prefers-color-scheme: light) {
-      :root { --bg: #f8fafc; --surface: #ffffff; --border: #e2e8f0; --text: #0f172a; --muted: #475569; }
+      --bg: #070b16; --surface: rgba(255,255,255,.04); --border: rgba(255,255,255,.09);
+      --text: #f1f5f9; --muted: #94a3b8; --green: #42b883; --blue: #3b82f6; --violet: #8b5cf6;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { background: var(--bg); color: var(--text); font-family: Inter, system-ui, sans-serif; line-height: 1.6; }
-    a { color: var(--accent); text-decoration: none; }
-    a:hover { text-decoration: underline; }
-    .wrap { max-width: 880px; margin: 0 auto; padding: 0 20px; }
-    nav { display: flex; justify-content: space-between; align-items: center; padding: 24px 0; }
-    nav .logo { font-family: "JetBrains Mono", monospace; color: var(--text); font-weight: 500; }
-    nav ul { display: flex; gap: 20px; list-style: none; }
-    nav ul a { color: var(--muted); font-size: .95rem; }
-    header { padding: 80px 0 64px; }
-    .hello { font-family: "JetBrains Mono", monospace; color: var(--accent); margin-bottom: 12px; }
-    h1 { font-size: clamp(2.2rem, 6vw, 3.6rem); line-height: 1.1; }
-    h1 span { color: var(--muted); display: block; font-size: .6em; margin-top: 8px; }
-    header p { max-width: 600px; color: var(--muted); margin: 24px 0 32px; font-size: 1.1rem; }
-    .btns { display: flex; gap: 12px; flex-wrap: wrap; }
-    .btn { padding: 10px 20px; border-radius: 8px; border: 1px solid var(--accent); font-weight: 500; }
-    .btn.primary { background: var(--accent); color: #0b1120; }
-    section { padding: 48px 0; border-top: 1px solid var(--border); }
-    h2 { font-size: 1.5rem; margin-bottom: 24px; }
-    h2::before { content: "# "; color: var(--accent); font-family: "JetBrains Mono", monospace; }
-    .stack { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
-    .chip { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 14px; display: flex; align-items: center; gap: 10px; font-weight: 500; }
-    .chip img { width: 28px; height: 28px; }
-    .sub { color: var(--muted); margin: 28px 0 12px; font-size: .95rem; }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: Inter, system-ui, sans-serif; line-height: 1.6; overflow-x: hidden; }
+    a { color: inherit; text-decoration: none; }
+    .wrap { max-width: 1040px; margin: 0 auto; padding: 0 20px; }
+    .grad { background: linear-gradient(90deg, var(--green), var(--blue) 50%, var(--violet)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+
+    /* Hero */
+    .hero { position: relative; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; padding: 100px 0 60px; overflow: hidden; }
+    .blob { position: absolute; border-radius: 50%; filter: blur(90px); opacity: .45; z-index: -1; animation: float 14s ease-in-out infinite alternate; }
+    .b1 { width: 460px; height: 460px; background: var(--green); top: -120px; left: -140px; }
+    .b2 { width: 520px; height: 520px; background: var(--violet); bottom: -160px; right: -160px; animation-delay: -6s; }
+    .b3 { width: 320px; height: 320px; background: var(--blue); top: 40%; left: 45%; opacity: .25; animation-delay: -3s; }
+    @keyframes float { to { transform: translate(60px, 40px) scale(1.1); } }
+    .gridbg { position: absolute; inset: 0; z-index: -1; background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px); background-size: 56px 56px; mask-image: radial-gradient(ellipse at center, #000 30%, transparent 75%); -webkit-mask-image: radial-gradient(ellipse at center, #000 30%, transparent 75%); }
+    .pill { display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; border: 1px solid var(--border); border-radius: 999px; background: var(--surface); font-size: .85rem; color: var(--muted); backdrop-filter: blur(8px); width: fit-content; }
+    .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 0 var(--green); animation: pulse 2s infinite; }
+    @keyframes pulse { 70% { box-shadow: 0 0 0 10px transparent; } 100% { box-shadow: 0 0 0 0 transparent; } }
+    .hero h1 { font-size: clamp(2.6rem, 7.5vw, 5.4rem); line-height: 1.02; font-weight: 800; letter-spacing: -.03em; margin: 24px 0; }
+    .hero .lead { font-size: clamp(1.05rem, 2.2vw, 1.3rem); color: var(--muted); max-width: 640px; }
+    .hero .lead strong { color: var(--text); font-weight: 600; }
+    .typed { font-family: "JetBrains Mono", monospace; color: var(--green); }
+    .typed::after { content: "▍"; animation: blink 1s steps(1) infinite; margin-left: 2px; }
+    @keyframes blink { 50% { opacity: 0; } }
+    .ctas { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 36px; }
+    .btn { padding: 14px 26px; border-radius: 12px; font-weight: 600; border: 1px solid var(--border); background: var(--surface); transition: transform .2s, box-shadow .2s, border-color .2s; }
+    .btn:hover { transform: translateY(-2px); border-color: var(--green); }
+    .btn.primary { background: linear-gradient(90deg, var(--green), var(--blue)); border: none; color: #04110b; box-shadow: 0 10px 40px -10px rgba(66,184,131,.6); }
+    .btn.primary:hover { box-shadow: 0 14px 50px -8px rgba(59,130,246,.7); }
+    .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 64px; max-width: 720px; }
+    .stat { border-left: 2px solid var(--green); padding-left: 16px; }
+    .stat b { display: block; font-size: clamp(1.6rem, 4vw, 2.2rem); font-weight: 800; }
+    .stat span { color: var(--muted); font-size: .9rem; }
+    .scroll { position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%); color: var(--muted); font-size: .8rem; letter-spacing: .2em; }
+
+    /* Sections */
+    section { padding: 110px 0; }
+    .eyebrow { font-family: "JetBrains Mono", monospace; color: var(--green); font-size: .85rem; letter-spacing: .1em; text-transform: uppercase; }
+    h2 { font-size: clamp(2rem, 5vw, 3rem); font-weight: 800; letter-spacing: -.02em; line-height: 1.1; margin: 10px 0 40px; }
+    .about { display: grid; grid-template-columns: 1.3fr 1fr; gap: 48px; align-items: start; }
+    .about p { color: var(--muted); font-size: 1.1rem; margin-bottom: 18px; }
+    .about p strong { color: var(--text); }
+    .values { display: flex; flex-direction: column; gap: 14px; }
+    .value { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 20px; display: flex; gap: 14px; }
+    .value i { font-style: normal; font-size: 1.5rem; }
+    .value h3 { font-size: 1rem; margin-bottom: 2px; }
+    .value p { color: var(--muted); font-size: .92rem; margin: 0; }
+
+    .stack-group { margin-bottom: 36px; }
+    .stack-group h3 { color: var(--muted); font-size: .9rem; font-weight: 500; margin-bottom: 14px; }
+    .stack { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
+    .chip { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 14px 16px; display: flex; align-items: center; gap: 12px; font-weight: 500; transition: transform .2s, border-color .2s; }
+    .chip:hover { transform: translateY(-3px); border-color: var(--blue); }
+    .chip img { width: 30px; height: 30px; border-radius: 6px; }
+    .main .chip { padding: 20px; font-size: 1.05rem; }
+    .main .chip img { width: 40px; height: 40px; }
+
+    .timeline { display: flex; flex-direction: column; gap: 22px; }
+    .job { background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 28px; display: grid; grid-template-columns: 180px 1fr; gap: 24px; transition: border-color .2s; }
+    .job:hover { border-color: var(--green); }
+    .job .when { font-family: "JetBrains Mono", monospace; color: var(--green); font-size: .85rem; }
+    .job h3 { font-size: 1.25rem; }
+    .job .org { color: var(--muted); margin-bottom: 12px; }
+    .job ul { color: var(--muted); padding-left: 18px; margin-bottom: 14px; }
+    .job li { margin-bottom: 6px; }
     .tags { display: flex; flex-wrap: wrap; gap: 8px; }
-    .tag { font-family: "JetBrains Mono", monospace; font-size: .8rem; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--border); color: var(--muted); }
-    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 16px; }
-    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 10px; transition: border-color .2s, transform .2s; color: var(--text); }
-    .card:hover { border-color: var(--accent); transform: translateY(-2px); text-decoration: none; }
-    .card h3 { font-size: 1.05rem; }
-    .card p { color: var(--muted); font-size: .92rem; flex: 1; }
-    .about p { color: var(--muted); margin-bottom: 12px; max-width: 680px; }
-    .timeline { display: flex; flex-direction: column; gap: 28px; border-left: 2px solid var(--border); padding-left: 24px; }
-    .job { position: relative; }
-    .job::before { content: ""; position: absolute; left: -31px; top: 8px; width: 12px; height: 12px; border-radius: 50%; background: var(--accent); }
-    .job h3 { font-size: 1.1rem; }
-    .job .meta { color: var(--muted); font-size: .9rem; font-family: "JetBrains Mono", monospace; margin-bottom: 8px; }
-    .job ul { color: var(--muted); padding-left: 18px; margin-bottom: 10px; }
-    .job li { margin-bottom: 4px; }
-    footer { padding: 40px 0; text-align: center; color: var(--muted); font-size: .9rem; border-top: 1px solid var(--border); }
-    @media (max-width: 560px) { nav ul { display: none; } header { padding: 40px 0; } }
+    .tag { font-family: "JetBrains Mono", monospace; font-size: .75rem; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--border); color: var(--muted); }
+
+    .cta { text-align: center; padding: 90px 20px; border: 1px solid var(--border); border-radius: 28px; background: radial-gradient(circle at top, rgba(66,184,131,.18), transparent 60%), var(--surface); margin-bottom: 80px; }
+    .cta h2 { margin-bottom: 16px; }
+    .cta p { color: var(--muted); margin-bottom: 30px; font-size: 1.1rem; }
+    .cta .ctas { justify-content: center; margin: 0; }
+    footer { text-align: center; color: var(--muted); font-size: .85rem; padding: 0 0 40px; }
+
+    .reveal { opacity: 0; transform: translateY(24px); transition: opacity .7s ease, transform .7s ease; }
+    .reveal.in { opacity: 1; transform: none; }
+    @media (prefers-reduced-motion: reduce) { .blob, .dot, .typed::after { animation: none; } .reveal { opacity: 1; transform: none; transition: none; } html { scroll-behavior: auto; } }
+    @media (max-width: 760px) {
+      .about { grid-template-columns: 1fr; }
+      .job { grid-template-columns: 1fr; gap: 8px; padding: 22px; }
+      .stats { grid-template-columns: 1fr; gap: 18px; margin-top: 44px; }
+      section { padding: 72px 0; }
+      .scroll { display: none; }
+    }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <nav>
-      <span class="logo">~/leandro</span>
-      <ul>
-        <li><a href="#about">About</a></li>
-        <li><a href="#experience">What I do</a></li>
-        <li><a href="#stack">Stack</a></li>
-        <li><a href="#projects">Projects</a></li>
-        <li><a href="#contact">Contact</a></li>
-      </ul>
-    </nav>
-
-    <header>
-      <p class="hello">Hi, my name is</p>
-      <h1>Leandro Cavalcanti<span>I build APIs and web apps.</span></h1>
-      <p>Software developer with a data engineering background, based in Brasília, Brazil. I learn fast, adapt easily, and work across the stack with <strong>Python</strong> and <strong>FastAPI</strong> on the backend and <strong>TypeScript</strong> and <strong>Vue.js</strong> on the frontend.</p>
-      <div class="btns">
-        <a class="btn primary" href="https://github.com/Hitsu-360">GitHub</a>
-        <a class="btn" href="https://www.linkedin.com/in/leandro-cavalcanti-a39202165/">LinkedIn</a>
+  <header class="hero">
+    <div class="gridbg"></div>
+    <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
+    <div class="wrap">
+      <span class="pill"><span class="dot"></span>Software Engineer · Brasília, Brazil</span>
+      <h1>I build software that's <span class="grad">simple to use</span><br />and <span class="grad">built to last.</span></h1>
+      <p class="lead">Hi, I'm <strong>Leandro Cavalcanti</strong>, a software engineer with a data engineering background. I turn complex problems into intuitive products, <span class="typed" id="typed">fast.</span></p>
+      <div class="ctas">
+        <a class="btn primary" href="https://www.linkedin.com/in/leandro-cavalcanti-a39202165/">Let's work together →</a>
+        <a class="btn" href="#experience">See my experience</a>
       </div>
-    </header>
+      <div class="stats">
+        <div class="stat"><b>8+ yrs</b><span>building software</span></div>
+        <div class="stat"><b>Full stack</b><span>from UI to data platform</span></div>
+        <div class="stat"><b>AI-powered</b><span>development &amp; delivery</span></div>
+      </div>
+    </div>
+    <a class="scroll" href="#about">SCROLL ↓</a>
+  </header>
 
-    <section id="about" class="about">
-      <h2>About</h2>
-      <p>I'm a software developer with a background in data engineering, currently at <a href="https://qualytics.co/">Qualytics</a>. I work across the stack, from Vue.js and TypeScript interfaces to Python and FastAPI services, and bring a data engineer's eye for integrations, pipelines and reliability.</p>
-      <p>I learn new technologies fast and adapt easily. Over the years I've moved between frontend, backend, data and DevOps work, picking up whatever each project needed and delivering high-quality software.</p>
-      <p>🎓 Universidade Católica de Brasília · 🗣️ Portuguese (native), English (advanced)</p>
-    </section>
-
-    <section id="experience">
-      <h2>What I do</h2>
-      <div class="grid">
-        <div class="card"><h3>Full-stack development</h3><p>Building product features end to end: Vue.js and TypeScript interfaces backed by Python and FastAPI services, across the whole development lifecycle.</p><div class="tags"><span class="tag">Vue.js</span><span class="tag">TypeScript</span><span class="tag">FastAPI</span></div></div>
-        <div class="card"><h3>Data integrations</h3><p>Connecting applications to data warehouses and storage platforms such as Snowflake, Databricks, BigQuery and S3.</p><div class="tags"><span class="tag">Snowflake</span><span class="tag">BigQuery</span><span class="tag">S3</span></div></div>
-        <div class="card"><h3>Data pipelines</h3><p>Designing ETL/ELT pipelines that pull from APIs, SFTP servers and databases, with transformations, tests and docs in dbt and orchestration in Airflow.</p><div class="tags"><span class="tag">dbt</span><span class="tag">Airflow</span><span class="tag">Fivetran</span></div></div>
-        <div class="card"><h3>Serverless &amp; APIs</h3><p>Writing REST APIs and Python AWS Lambda functions that consume third-party APIs and move data where it needs to go.</p><div class="tags"><span class="tag">Python</span><span class="tag">AWS Lambda</span><span class="tag">REST</span></div></div>
-        <div class="card"><h3>CI/CD &amp; DevOps</h3><p>Automating builds and deployments with GitHub Actions, CircleCI and ArgoCD, and creating reproducible Docker development environments.</p><div class="tags"><span class="tag">GitHub Actions</span><span class="tag">Docker</span><span class="tag">ArgoCD</span></div></div>
-        <div class="card"><h3>Fast learner</h3><p>Over the years I've shipped with Java, C#, Node.js, Electron and more. I pick up new tools quickly and adapt to whatever the project needs.</p><div class="tags"><span class="tag">Adaptable</span><span class="tag">Curious</span></div></div>
+  <main class="wrap">
+    <section id="about" class="reveal">
+      <span class="eyebrow">About me</span>
+      <h2>Engineer by trade.<br /><span class="grad">Problem solver by nature.</span></h2>
+      <div class="about">
+        <div>
+          <p>I'm a software engineer at <strong>Qualytics</strong> with a strong background in <strong>data engineering</strong>. That background shapes how I build: I care about quality, reliability and the details that make a platform a pleasure to use.</p>
+          <p>I work across the whole development lifecycle, from shaping an idea to shipping it in production, and I'm always looking for better ways to improve the products I work on.</p>
+          <p>New technologies don't slow me down. I <strong>learn fast</strong>, <strong>adapt easily</strong>, and use AI tools every day to design, build and deliver features faster.</p>
+        </div>
+        <div class="values">
+          <div class="value"><i>✨</i><div><h3>Easy UX, robust platform</h3><p>Interfaces that feel simple, built on foundations that scale.</p></div></div>
+          <div class="value"><i>📊</i><div><h3>Data-minded</h3><p>Integrations, pipelines and reliability come naturally.</p></div></div>
+          <div class="value"><i>⚡</i><div><h3>Fast learner</h3><p>Comfortable picking up whatever the project needs.</p></div></div>
+          <div class="value"><i>🤖</i><div><h3>AI-assisted delivery</h3><p>Using AI daily to move from idea to production faster.</p></div></div>
+        </div>
       </div>
     </section>
 
-    <section id="stack">
-      <h2>Stack</h2>
-      <div class="stack">
-        <div class="chip"><img src="https://skillicons.dev/icons?i=python" alt="" />Python</div>
-        <div class="chip"><img src="https://skillicons.dev/icons?i=fastapi" alt="" />FastAPI</div>
-        <div class="chip"><img src="https://skillicons.dev/icons?i=ts" alt="" />TypeScript</div>
-        <div class="chip"><img src="https://skillicons.dev/icons?i=vue" alt="" />Vue.js</div>
+    <section id="stack" class="reveal">
+      <span class="eyebrow">Tech stack</span>
+      <h2>The tools I <span class="grad">ship with.</span></h2>
+      <div class="stack-group main">
+        <h3>Main focus</h3>
+        <div class="stack">
+          <div class="chip"><img src="https://skillicons.dev/icons?i=python" alt="" />Python</div>
+          <div class="chip"><img src="https://skillicons.dev/icons?i=fastapi" alt="" />FastAPI</div>
+          <div class="chip"><img src="https://skillicons.dev/icons?i=ts" alt="" />TypeScript</div>
+          <div class="chip"><img src="https://skillicons.dev/icons?i=vue" alt="" />Vue.js</div>
+        </div>
       </div>
-      <p class="sub">Data &amp; infrastructure</p>
-      <div class="tags">
-        <span class="tag">SQL</span><span class="tag">Airflow</span><span class="tag">Fivetran</span><span class="tag">dbt</span>
-        <span class="tag">Snowflake</span><span class="tag">BigQuery</span><span class="tag">PostgreSQL</span><span class="tag">AWS</span>
-        <span class="tag">AWS Lambda</span><span class="tag">S3</span><span class="tag">Docker</span><span class="tag">Git</span><span class="tag">GitHub Actions</span>
+      <div class="stack-group">
+        <h3>Data &amp; infrastructure</h3>
+        <div class="stack">
+          <div class="chip"><img src="https://raw.githubusercontent.com/Hitsu-360/Hitsu-360/main/assets/snowflake.svg" alt="" />Snowflake</div>
+          <div class="chip"><img src="https://raw.githubusercontent.com/Hitsu-360/Hitsu-360/main/assets/dbt.svg" alt="" />dbt</div>
+          <div class="chip"><img src="https://skillicons.dev/icons?i=gcp" alt="" />BigQuery</div>
+          <div class="chip"><img src="https://skillicons.dev/icons?i=postgres" alt="" />PostgreSQL</div>
+          <div class="chip"><img src="https://skillicons.dev/icons?i=aws" alt="" />AWS</div>
+          <div class="chip"><img src="https://skillicons.dev/icons?i=docker" alt="" />Docker</div>
+          <div class="chip"><img src="https://skillicons.dev/icons?i=githubactions" alt="" />GitHub Actions</div>
+          <div class="chip"><img src="https://skillicons.dev/icons?i=git" alt="" />Git</div>
+        </div>
       </div>
     </section>
 
-    <section id="projects">
-      <h2>Projects</h2>
-      <div class="grid">
-        <a class="card" href="https://github.com/Hitsu-360/fast-api-sample"><h3>fast-api-sample</h3><p>A sample REST API built with FastAPI.</p><div class="tags"><span class="tag">Python</span><span class="tag">FastAPI</span></div></a>
-        <a class="card" href="https://github.com/Hitsu-360/vue-sample-app"><h3>vue-sample-app</h3><p>A sample single-page application built with Vue.js.</p><div class="tags"><span class="tag">Vue.js</span></div></a>
-        <a class="card" href="https://github.com/Hitsu-360/snowpark-dash-app"><h3>snowpark-dash-app</h3><p>A Dash app using Snowpark to write to Snowflake through a UI.</p><div class="tags"><span class="tag">Python</span><span class="tag">Snowflake</span></div></a>
-        <a class="card" href="https://github.com/Hitsu-360/aws-lambda-dbt-api"><h3>aws-lambda-dbt-api</h3><p>AWS Lambda that collects information from the dbt API.</p><div class="tags"><span class="tag">Python</span><span class="tag">AWS</span></div></a>
-        <a class="card" href="https://github.com/Hitsu-360/aws-lambda-sharepoint-to-s3"><h3>aws-lambda-sharepoint-to-s3</h3><p>Lambda function that ingests SharePoint data into S3.</p><div class="tags"><span class="tag">Python</span><span class="tag">AWS</span></div></a>
-        <a class="card" href="https://github.com/Hitsu-360/to-do-app"><h3>to-do-app</h3><p>Full-stack to-do app with Vue.js, Node.js, Express and MySQL.</p><div class="tags"><span class="tag">Vue.js</span><span class="tag">Node.js</span></div></a>
+    <section id="experience" class="reveal">
+      <span class="eyebrow">Experience</span>
+      <h2>A decade of <span class="grad">building and shipping.</span></h2>
+      <div class="timeline">
+        <div class="job">
+          <div class="when">2023 — Present</div>
+          <div>
+            <h3>Software Engineer</h3>
+            <p class="org">Qualytics · Remote</p>
+            <ul>
+              <li>Own features across the full lifecycle, from frontend to backend, delivering high-quality software that expands the platform's capabilities.</li>
+              <li>Build integrations with modern data warehouses and storage platforms.</li>
+              <li>Ship continuously through automated CI/CD pipelines, with AI-assisted development.</li>
+            </ul>
+            <div class="tags"><span class="tag">Vue.js</span><span class="tag">TypeScript</span><span class="tag">Python</span><span class="tag">FastAPI</span><span class="tag">CI/CD</span></div>
+          </div>
+        </div>
+        <div class="job">
+          <div class="when">2018 — 2022</div>
+          <div>
+            <h3>Data Engineer &amp; Full Stack Developer</h3>
+            <p class="org">Consulting</p>
+            <ul>
+              <li>Designed ELT pipelines from APIs, SFTP servers and databases into cloud data warehouses, with transformations, tests and documentation in dbt.</li>
+              <li>Built serverless Python functions on AWS and set up CI/CD and Docker-based development environments.</li>
+              <li>Delivered web and desktop applications and REST APIs across several stacks for multiple clients.</li>
+            </ul>
+            <div class="tags"><span class="tag">dbt</span><span class="tag">Snowflake</span><span class="tag">Airflow</span><span class="tag">AWS Lambda</span><span class="tag">GitHub Actions</span></div>
+          </div>
+        </div>
+        <div class="job">
+          <div class="when">2016 — 2018</div>
+          <div>
+            <h3>Software Development Intern</h3>
+            <p class="org">Public sector</p>
+            <ul>
+              <li>Built frontend and backend features for internal web applications.</li>
+            </ul>
+            <div class="tags"><span class="tag">JavaScript</span><span class="tag">Java</span><span class="tag">Spring</span></div>
+          </div>
+        </div>
       </div>
     </section>
 
-    <section id="contact">
-      <h2>Contact</h2>
-      <p style="color:var(--muted)">The best way to reach me is on <a href="https://www.linkedin.com/in/leandro-cavalcanti-a39202165/">LinkedIn</a>. You can also find my work on <a href="https://github.com/Hitsu-360">GitHub</a>.</p>
-    </section>
-  </div>
+    <div class="cta reveal">
+      <h2>Have a product to <span class="grad">build?</span></h2>
+      <p>Let's talk about how I can help your team ship it.</p>
+      <div class="ctas">
+        <a class="btn primary" href="https://www.linkedin.com/in/leandro-cavalcanti-a39202165/">Connect on LinkedIn →</a>
+        <a class="btn" href="https://github.com/Hitsu-360">View GitHub</a>
+      </div>
+    </div>
+  </main>
+
   <footer>© <span id="y"></span> Leandro Cavalcanti</footer>
-  <script>document.getElementById('y').textContent = new Date().getFullYear();</script>
+
+  <script>
+    document.getElementById('y').textContent = new Date().getFullYear();
+    const words = ['fast.', 'reliably.', 'with care.', 'end to end.'];
+    const el = document.getElementById('typed');
+    if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      let w = 0, i = words[0].length, del = true;
+      setTimeout(function tick() {
+        const word = words[w];
+        el.textContent = word.slice(0, i);
+        if (del) {
+          if (i-- === 0) { del = false; w = (w + 1) % words.length; i = 0; }
+          return setTimeout(tick, 45);
+        }
+        if (i++ === word.length) { del = true; i = word.length; return setTimeout(tick, 1800); }
+        setTimeout(tick, 90);
+      }, 1800);
+    }
+    const io = new IntersectionObserver(es => es.forEach(e => e.isIntersecting && e.target.classList.add('in')), { threshold: .12 });
+    document.querySelectorAll('.reveal').forEach(n => io.observe(n));
+  </script>
 </body>
 </html>
