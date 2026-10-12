@@ -428,53 +428,72 @@
         music.start(total / 1000);
       }
 
-      // Generated soundtrack (Web Audio): warm pad, soft beat and an arpeggio, synced to the video length.
+      // Generated lo-fi soundtrack (Web Audio): jazzy Rhodes-like chords, dusty swung beat, vinyl crackle and tape wobble.
       const music = (() => {
         let ctx, master;
         const hz = m => 440 * Math.pow(2, (m - 69) / 12);
-        const chords = [[57, 60, 64, 69], [53, 57, 60, 65], [48, 52, 55, 60], [55, 59, 62, 67]];
-        function voice(type, f, t, len, vol, cutoff, attack = .01) {
-          const o = ctx.createOscillator(), g = ctx.createGain(), fl = ctx.createBiquadFilter();
-          o.type = type; o.frequency.value = f; fl.type = 'lowpass'; fl.frequency.value = cutoff;
-          g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(vol, t + attack); g.gain.exponentialRampToValueAtTime(.0001, t + len);
-          o.connect(fl).connect(g).connect(master); o.start(t); o.stop(t + len + .05);
+        // Dm9 – G13 – Cmaj9 – Am9
+        const chords = [[50, 53, 57, 60, 64], [43, 53, 57, 59, 64], [48, 52, 55, 59, 62], [45, 52, 55, 60, 59]];
+        let wow;
+        function keys(f, t, len, vol) {
+          [[1, 'sine', vol], [2.001, 'sine', vol * .18], [1.003, 'triangle', vol * .35]].forEach(([r, type, v]) => {
+            const o = ctx.createOscillator(), g = ctx.createGain();
+            o.type = type; o.frequency.value = f * r; wow.connect(o.detune);
+            g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(v, t + .02); g.gain.exponentialRampToValueAtTime(.0001, t + len);
+            o.connect(g).connect(master); o.start(t); o.stop(t + len + .05);
+          });
         }
         function kick(t) {
           const o = ctx.createOscillator(), g = ctx.createGain();
-          o.frequency.setValueAtTime(140, t); o.frequency.exponentialRampToValueAtTime(42, t + .14);
-          g.gain.setValueAtTime(.9, t); g.gain.exponentialRampToValueAtTime(.001, t + .32);
-          o.connect(g).connect(master); o.start(t); o.stop(t + .35);
+          o.frequency.setValueAtTime(110, t); o.frequency.exponentialRampToValueAtTime(40, t + .12);
+          g.gain.setValueAtTime(.7, t); g.gain.exponentialRampToValueAtTime(.001, t + .4);
+          o.connect(g).connect(master); o.start(t); o.stop(t + .45);
         }
-        function hat(t, noise) {
+        function noiseHit(t, noise, type, freq, vol, len) {
           const s = ctx.createBufferSource(), f = ctx.createBiquadFilter(), g = ctx.createGain();
-          s.buffer = noise; f.type = 'highpass'; f.frequency.value = 7000;
-          g.gain.setValueAtTime(.12, t); g.gain.exponentialRampToValueAtTime(.001, t + .06);
-          s.connect(f).connect(g).connect(master); s.start(t); s.stop(t + .08);
+          s.buffer = noise; f.type = type; f.frequency.value = freq;
+          g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(.001, t + len);
+          s.connect(f).connect(g).connect(master); s.start(t); s.stop(t + len + .02);
         }
         return {
           start(dur) {
             ctx = ctx || new (window.AudioContext || window.webkitAudioContext)();
             ctx.resume();
             if (master) { master.gain.cancelScheduledValues(ctx.currentTime); master.gain.setTargetAtTime(0, ctx.currentTime, .05); setTimeout(m => m.disconnect(), 300, master); }
-            master = ctx.createGain(); master.gain.value = muted ? 0 : .3; master.connect(ctx.destination);
-            const noise = ctx.createBuffer(1, ctx.sampleRate * .1, ctx.sampleRate), d = noise.getChannelData(0);
+            master = ctx.createGain(); master.gain.value = muted ? 0 : .35;
+            const tone = ctx.createBiquadFilter(); tone.type = 'lowpass'; tone.frequency.value = 2200; tone.Q.value = .4;
+            master.connect(tone).connect(ctx.destination);
+            const t0 = ctx.currentTime + .05, beat = 60 / 78, bars = Math.ceil(dur / (beat * 4)), end = t0 + dur;
+            // Tape wobble: slow pitch drift shared by every keys note.
+            const lfo = ctx.createOscillator(), depth = ctx.createGain();
+            lfo.frequency.value = .5; depth.gain.value = 9; lfo.connect(depth); wow = depth; lfo.start(t0); lfo.stop(end + 1);
+            const noise = ctx.createBuffer(1, ctx.sampleRate * .3, ctx.sampleRate), d = noise.getChannelData(0);
             for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
-            const t0 = ctx.currentTime + .05, beat = 60 / 104, bars = Math.ceil(dur / (beat * 4));
+            // Vinyl crackle: hiss bed plus random pops.
+            const len = Math.ceil(dur + 1), vinyl = ctx.createBuffer(1, ctx.sampleRate * len, ctx.sampleRate), v = vinyl.getChannelData(0);
+            for (let i = 0; i < v.length; i++) v[i] = (Math.random() * 2 - 1) * .012 + (Math.random() < .0004 ? (Math.random() * 2 - 1) * .5 : 0);
+            const vs = ctx.createBufferSource(); vs.buffer = vinyl; vs.connect(master); vs.start(t0); vs.stop(end + .5);
+            const swing = beat / 2 * .62;
             for (let b = 0; b < bars; b++) {
-              const t = t0 + b * beat * 4, ch = chords[Math.floor(b / 1) % 4];
-              ch.forEach(n => { voice('sawtooth', hz(n - 12), t, beat * 4.4, .045, 900, .6); voice('sawtooth', hz(n - 12) * 1.004, t, beat * 4.4, .03, 700, .6); });
-              voice('sine', hz(ch[0] - 24), t, beat * 4, .25, 400);
+              const t = t0 + b * beat * 4, ch = chords[b % 4];
+              // Lazy strum: notes rolled in slightly late.
+              ch.forEach((n, i) => keys(hz(n), t + i * .025 + Math.random() * .01, beat * 3.8, .05));
+              keys(hz(ch[0] - 12), t, beat * 2, .14);
+              keys(hz(ch[2] - 12), t + beat * 2.5, beat * 1.4, .1);
+              if (b % 2 === 1) [ch[4] + 12, ch[3] + 12, ch[2] + 12].forEach((n, i) => keys(hz(n), t + beat * (1.5 + i * .75), beat, .035));
+              if (b < 1) continue;
               for (let k = 0; k < 4; k++) {
-                const tb = t + k * beat;
-                if (b >= 1) kick(tb);
-                if (b >= 2) hat(tb + beat / 2, noise);
-                if (b >= 2) for (let s = 0; s < 2; s++) voice('triangle', hz(ch[(k * 2 + s) % 4] + 12), tb + s * beat / 2, .35, .07, 3000);
+                const tb = t + k * beat + (Math.random() - .5) * .012;
+                if (k === 0 || (k === 2 && b % 2)) kick(tb);
+                if (k === 2 && !(b % 2)) kick(tb + swing);
+                if (k === 1 || k === 3) noiseHit(tb, noise, 'bandpass', 1800, .16, .18);
+                noiseHit(tb, noise, 'highpass', 6000, .035, .04);
+                noiseHit(tb + swing, noise, 'highpass', 6000, .025, .04);
               }
             }
-            const end = t0 + dur;
-            master.gain.setValueAtTime(muted ? 0 : .3, end - 2.5); master.gain.linearRampToValueAtTime(0, end);
+            master.gain.setValueAtTime(muted ? 0 : .35, end - 2.5); master.gain.linearRampToValueAtTime(0, end);
           },
-          setMuted(m) { muted = m; if (master) { master.gain.cancelScheduledValues(ctx.currentTime); master.gain.setTargetAtTime(m ? 0 : .3, ctx.currentTime, .05); } }
+          setMuted(m) { muted = m; if (master) { master.gain.cancelScheduledValues(ctx.currentTime); master.gain.setTargetAtTime(m ? 0 : .35, ctx.currentTime, .05); } }
         };
       })();
 
