@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Leandro Cavalcanti — Software Engineer</title>
+  <meta name="description" content="Leandro Cavalcanti, Software Engineer working with Python, FastAPI, TypeScript and Vue.js." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0b1120; --surface: #111a2e; --border: #1e293b;
+      --text: #e2e8f0; --muted: #94a3b8; --accent: #42b883; --accent2: #3b82f6;
+    }
+    @media (prefers-color-scheme: light) {
+      :root { --bg: #f8fafc; --surface: #ffffff; --border: #e2e8f0; --text: #0f172a; --muted: #475569; }
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--text); font-family: Inter, system-ui, sans-serif; line-height: 1.6; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .wrap { max-width: 880px; margin: 0 auto; padding: 0 20px; }
+    nav { display: flex; justify-content: space-between; align-items: center; padding: 24px 0; }
+    nav .logo { font-family: "JetBrains Mono", monospace; color: var(--text); font-weight: 500; }
+    nav ul { display: flex; gap: 20px; list-style: none; }
+    nav ul a { color: var(--muted); font-size: .95rem; }
+    header { padding: 80px 0 64px; }
+    .hello { font-family: "JetBrains Mono", monospace; color: var(--accent); margin-bottom: 12px; }
+    h1 { font-size: clamp(2.2rem, 6vw, 3.6rem); line-height: 1.1; }
+    h1 span { color: var(--muted); display: block; font-size: .6em; margin-top: 8px; }
+    header p { max-width: 600px; color: var(--muted); margin: 24px 0 32px; font-size: 1.1rem; }
+    .btns { display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn { padding: 10px 20px; border-radius: 8px; border: 1px solid var(--accent); font-weight: 500; }
+    .btn.primary { background: var(--accent); color: #0b1120; }
+    section { padding: 48px 0; border-top: 1px solid var(--border); }
+    h2 { font-size: 1.5rem; margin-bottom: 24px; }
+    h2::before { content: "# "; color: var(--accent); font-family: "JetBrains Mono", monospace; }
+    .stack { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+    .chip { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 14px; display: flex; align-items: center; gap: 10px; font-weight: 500; }
+    .chip img { width: 28px; height: 28px; }
+    .sub { color: var(--muted); margin: 28px 0 12px; font-size: .95rem; }
+    .tags { display: flex; flex-wrap: wrap; gap: 8px; }
+    .tag { font-family: "JetBrains Mono", monospace; font-size: .8rem; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--border); color: var(--muted); }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 16px; }
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 10px; transition: border-color .2s, transform .2s; color: var(--text); }
+    .card:hover { border-color: var(--accent); transform: translateY(-2px); text-decoration: none; }
+    .card h3 { font-size: 1.05rem; }
+    .card p { color: var(--muted); font-size: .92rem; flex: 1; }
+    .about p { color: var(--muted); margin-bottom: 12px; max-width: 680px; }
+    footer { padding: 40px 0; text-align: center; color: var(--muted); font-size: .9rem; border-top: 1px solid var(--border); }
+    @media (max-width: 560px) { nav ul { display: none; } header { padding: 40px 0; } }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <nav>
+      <span class="logo">~/leandro</span>
+      <ul>
+        <li><a href="#about">About</a></li>
+        <li><a href="#stack">Stack</a></li>
+        <li><a href="#projects">Projects</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </nav>
+
+    <header>
+      <p class="hello">Hi, my name is</p>
+      <h1>Leandro Cavalcanti<span>I build APIs and web apps.</span></h1>
+      <p>Software Engineer based in Brasília, Brazil. I work across the stack with <strong>Python</strong> and <strong>FastAPI</strong> on the backend and <strong>TypeScript</strong> and <strong>Vue.js</strong> on the frontend.</p>
+      <div class="btns">
+        <a class="btn primary" href="https://github.com/Hitsu-360">GitHub</a>
+        <a class="btn" href="https://www.linkedin.com/in/leandro-cavalcanti-a39202165/">LinkedIn</a>
+      </div>
+    </header>
+
+    <section id="about" class="about">
+      <h2>About</h2>
+      <p>I'm a Software Engineer currently at <a href="https://qualytics.co/">Qualytics</a>, focused on building reliable backend services and clean, responsive user interfaces.</p>
+      <p>Before focusing on full-stack product work, I spent time in data engineering: building pipelines on AWS Lambda, modeling data with dbt and working with Snowflake. That background shapes how I design APIs: typed, tested and data-aware.</p>
+    </section>
+
+    <section id="stack">
+      <h2>Stack</h2>
+      <div class="stack">
+        <div class="chip"><img src="https://skillicons.dev/icons?i=python" alt="" />Python</div>
+        <div class="chip"><img src="https://skillicons.dev/icons?i=fastapi" alt="" />FastAPI</div>
+        <div class="chip"><img src="https://skillicons.dev/icons?i=ts" alt="" />TypeScript</div>
+        <div class="chip"><img src="https://skillicons.dev/icons?i=vue" alt="" />Vue.js</div>
+      </div>
+      <p class="sub">Also worked with</p>
+      <div class="tags">
+        <span class="tag">JavaScript</span><span class="tag">Node.js</span><span class="tag">Docker</span>
+        <span class="tag">AWS</span><span class="tag">PostgreSQL</span><span class="tag">MySQL</span>
+        <span class="tag">MongoDB</span><span class="tag">Snowflake</span><span class="tag">dbt</span><span class="tag">Git</span>
+      </div>
+    </section>
+
+    <section id="projects">
+      <h2>Projects</h2>
+      <div class="grid">
+        <a class="card" href="https://github.com/Hitsu-360/fast-api-sample"><h3>fast-api-sample</h3><p>A sample REST API built with FastAPI.</p><div class="tags"><span class="tag">Python</span><span class="tag">FastAPI</span></div></a>
+        <a class="card" href="https://github.com/Hitsu-360/vue-sample-app"><h3>vue-sample-app</h3><p>A sample single-page application built with Vue.js.</p><div class="tags"><span class="tag">Vue.js</span></div></a>
+        <a class="card" href="https://github.com/Hitsu-360/snowpark-dash-app"><h3>snowpark-dash-app</h3><p>A Dash app using Snowpark to write to Snowflake through a UI.</p><div class="tags"><span class="tag">Python</span><span class="tag">Snowflake</span></div></a>
+        <a class="card" href="https://github.com/Hitsu-360/aws-lambda-dbt-api"><h3>aws-lambda-dbt-api</h3><p>AWS Lambda that collects information from the dbt API.</p><div class="tags"><span class="tag">Python</span><span class="tag">AWS</span></div></a>
+        <a class="card" href="https://github.com/Hitsu-360/aws-lambda-sharepoint-to-s3"><h3>aws-lambda-sharepoint-to-s3</h3><p>Lambda function that ingests SharePoint data into S3.</p><div class="tags"><span class="tag">Python</span><span class="tag">AWS</span></div></a>
+        <a class="card" href="https://github.com/Hitsu-360/to-do-app"><h3>to-do-app</h3><p>Full-stack to-do app with Vue.js, Node.js, Express and MySQL.</p><div class="tags"><span class="tag">Vue.js</span><span class="tag">Node.js</span></div></a>
+      </div>
+    </section>
+
+    <section id="contact">
+      <h2>Contact</h2>
+      <p style="color:var(--muted)">The best way to reach me is on <a href="https://www.linkedin.com/in/leandro-cavalcanti-a39202165/">LinkedIn</a>. You can also find my work on <a href="https://github.com/Hitsu-360">GitHub</a>.</p>
+    </section>
+  </div>
+  <footer>© <span id="y"></span> Leandro Cavalcanti</footer>
+  <script>document.getElementById('y').textContent = new Date().getFullYear();</script>
+</body>
+</html>
