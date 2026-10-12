@@ -20,8 +20,8 @@
     .grad { background: linear-gradient(90deg, var(--violet), var(--green) 45%, var(--blue)); -webkit-background-clip: text; background-clip: text; color: transparent; }
 
     /* Hero */
-    .hero { position: relative; min-height: 100vh; padding: 80px 0 70px; overflow: hidden; text-align: center; }
-    .hero .wrap { display: flex; flex-direction: column; align-items: center; max-width: 1120px; }
+    .hero { position: relative; min-height: 100vh; padding: 96px 0 110px; overflow: hidden; text-align: center; }
+    .hero .wrap { display: flex; flex-direction: column; align-items: center; max-width: 1360px; padding: 0 32px; }
     .blob { position: absolute; border-radius: 50%; filter: blur(110px); opacity: .22; z-index: -1; animation: float 14s ease-in-out infinite alternate; }
     .b1 { width: 460px; height: 460px; background: var(--green); top: -120px; left: -140px; }
     .b2 { width: 520px; height: 520px; background: var(--blue); bottom: -160px; right: -160px; animation-delay: -6s; }
@@ -31,9 +31,9 @@
     .pill { display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; border: 1px solid var(--border); border-radius: 999px; background: var(--surface); font-size: .85rem; color: var(--muted); backdrop-filter: blur(8px); width: fit-content; }
     .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 0 var(--green); animation: pulse 2s infinite; }
     @keyframes pulse { 70% { box-shadow: 0 0 0 10px transparent; } 100% { box-shadow: 0 0 0 0 transparent; } }
-    .hero h1 { font-size: clamp(2.1rem, 5.6vw, 4.4rem); line-height: 1.05; font-weight: 800; letter-spacing: -.03em; margin: 22px 0 40px; }
+    .hero h1 { font-size: clamp(2.1rem, 5.6vw, 4.4rem); line-height: 1.05; font-weight: 800; letter-spacing: -.03em; margin: 28px 0 64px; }
     .hero h1 .grad { white-space: nowrap; }
-    .hero .lead { font-size: clamp(1.05rem, 2.2vw, 1.3rem); color: var(--muted); max-width: 680px; margin-top: 44px; }
+    .hero .lead { font-size: clamp(1.05rem, 2.2vw, 1.3rem); color: var(--muted); max-width: 760px; margin-top: 72px; }
     .hero .lead strong { color: var(--text); font-weight: 600; }
     .typed { font-family: "JetBrains Mono", monospace; color: var(--green); }
     .typed::after { content: "▍"; animation: blink 1s steps(1) infinite; margin-left: 2px; }
@@ -43,7 +43,7 @@
     .btn:hover { transform: translateY(-2px); border-color: var(--green); }
     .btn.primary { background: linear-gradient(90deg, var(--green), var(--blue)); border: none; color: #0a0a0a; box-shadow: 0 10px 40px -10px rgba(250,204,21,.45); }
     .btn.primary:hover { box-shadow: 0 14px 50px -8px rgba(245,158,11,.6); }
-    .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 56px; width: min(720px, 100%); text-align: left; }
+    .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; margin-top: 80px; width: min(960px, 100%); text-align: left; }
     .stat { border-left: 2px solid var(--green); padding-left: 16px; }
     .stat b { display: block; white-space: nowrap; font-size: clamp(1.2rem, 2.4vw, 1.6rem); font-weight: 800; }
     .stat span { color: var(--muted); font-size: .9rem; }
@@ -88,7 +88,7 @@
     footer { text-align: center; color: var(--muted); font-size: .85rem; padding: 0 0 40px; }
 
     /* Reel */
-    .screen-wrap { position: relative; width: 100%; max-width: 980px; }
+    .screen-wrap { position: relative; width: 100%; max-width: 1280px; }
     .screen-wrap::before { content: ""; position: absolute; inset: -3px; border-radius: 30px; background: conic-gradient(from var(--ang, 0deg), var(--green), transparent 30%, var(--blue) 50%, transparent 80%, var(--green)); animation: ring 6s linear infinite; filter: blur(2px); }
     @property --ang { syntax: "<angle>"; initial-value: 0deg; inherits: false; }
     @keyframes ring { to { --ang: 360deg; } }
@@ -171,9 +171,9 @@
     @keyframes bob { 50% { transform: translateY(-.8cqw); } }
 
     /* Player UI */
-    .cover { position: absolute; inset: 0; z-index: 3; display: flex; align-items: flex-end; justify-content: center; gap: 2cqw; padding: 0 0 5cqw; font: inherit; background: linear-gradient(transparent 45%, rgba(0,0,0,.85)); cursor: pointer; border: 0; color: var(--text); transition: opacity .4s; }
+    .cover { position: absolute; inset: 0; z-index: 3; display: flex; align-items: flex-end; justify-content: center; gap: 2cqw; padding: 0 0 4cqw; font: inherit; background: linear-gradient(transparent 45%, rgba(0,0,0,.85)); cursor: pointer; border: 0; color: var(--text); transition: opacity .4s; }
     .cover.hide { opacity: 0; pointer-events: none; }
-    .play { flex-shrink: 0; width: 8cqw; aspect-ratio: 1; border-radius: 50%; background: linear-gradient(135deg, var(--green), var(--blue)); display: grid; place-items: center; box-shadow: 0 0 0 0 rgba(250,204,21,.6); animation: halo 2s infinite; }
+    .play { flex-shrink: 0; width: 4.6cqw; min-width: 44px; aspect-ratio: 1; border-radius: 50%; background: linear-gradient(135deg, var(--green), var(--blue)); display: grid; place-items: center; box-shadow: 0 0 0 0 rgba(250,204,21,.6); animation: halo 2s infinite; }
     .play svg { width: 40%; margin-left: 8%; fill: #0a0a0a; }
     @keyframes halo { 70% { box-shadow: 0 0 0 3cqw rgba(250,204,21,0); } 100% { box-shadow: 0 0 0 0 rgba(250,204,21,0); } }
     .cover span { line-height: 8cqw; font: 600 2cqw Inter, sans-serif; letter-spacing: .05em; color: var(--text); }
@@ -263,7 +263,7 @@
         <div class="big a" style="transition-delay:0.15s"><span class="grad">Simple to use.</span><br />Built to last.</div>
         <div class="small a" style="transition-delay:0.60s">Find me on LinkedIn and GitHub</div>
       </div>
-      <button class="cover" id="cover" aria-label="Play introduction video with music"><div class="play"><svg viewBox="0 0 24 24"><path d="M6 4l15 8-15 8z"/></svg></div><span>Watch my 40-second intro ♪</span></button>
+      <button class="cover" id="cover" aria-label="Play introduction video with music"><div class="play"><svg viewBox="0 0 24 24"><path d="M6 4l15 8-15 8z"/></svg></div></button>
       <div class="controls"><button id="mute" aria-label="Toggle music">♪ Sound on</button><button id="replay">↻ Replay</button></div>
       <div class="bar" id="bar"></div>
       </div>
