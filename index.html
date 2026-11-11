@@ -49,7 +49,37 @@
     .stat span { color: var(--muted); font-size: .9rem; }
 
     /* Sections */
-    section { padding: 110px 0; }
+    section { position: relative; overflow: hidden; padding: 110px 0; }
+    section > .wrap { position: relative; z-index: 1; }
+
+    /* Yellow bands: same components, inverted tokens */
+    .band {
+      --text: #0a0a0a; --muted: rgba(10,10,10,.72); --border: rgba(10,10,10,.14); --surface: rgba(255,255,255,.3);
+      --green: #0a0a0a; --blue: #78350f; --violet: #0a0a0a;
+      background: linear-gradient(160deg, #fde047, #facc15 45%, #f5b70b); color: var(--text);
+    }
+    .band .btn.primary { background: #0a0a0a; color: #facc15; box-shadow: 0 10px 30px -10px rgba(0,0,0,.5); }
+    .band .btn.primary:hover { box-shadow: 0 14px 40px -8px rgba(0,0,0,.55); }
+    .band h2 { line-height: 1.28; }
+    .band .grad { background: #0a0a0a; color: #facc15; padding: 0 .14em; border-radius: .12em; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+    .band ::selection { background: #0a0a0a; color: #facc15; }
+
+    /* Parallax decor (moved by the scroll script via `translate`) */
+    .deco { position: absolute; inset: 0; pointer-events: none; }
+    .deco > * { position: absolute; will-change: translate; }
+    .orbit { border-radius: 50%; border: 2px solid rgba(250,204,21,.16); }
+    .band .orbit { border-color: rgba(10,10,10,.2); }
+    .dots { width: 240px; height: 240px; background: radial-gradient(rgba(250,204,21,.3) 1.5px, transparent 2px) 0 0 / 22px 22px; -webkit-mask: radial-gradient(closest-side, #000, transparent); mask: radial-gradient(closest-side, #000, transparent); }
+    .band .dots { background-image: radial-gradient(rgba(10,10,10,.38) 1.5px, transparent 2px); }
+    .glow { width: 420px; height: 420px; border-radius: 50%; background: var(--blue); filter: blur(120px); opacity: .12; }
+    .r1 { width: 520px; height: 520px; top: -180px; right: -160px; }
+    .r2 { width: 300px; height: 300px; top: 30%; left: -120px; }
+    .r3 { width: 440px; height: 440px; bottom: -120px; left: -140px; }
+    .d1 { left: 4%; bottom: 18%; }
+    .d2 { right: 6%; top: 8%; }
+    .d3 { right: 4%; top: 40%; }
+    .g1 { top: -80px; right: 10%; }
+    .g2 { bottom: 10%; left: -120px; background: var(--green); }
     .eyebrow { font-family: "JetBrains Mono", monospace; color: var(--green); font-size: .85rem; letter-spacing: .1em; text-transform: uppercase; }
     h2 { font-size: clamp(2rem, 5vw, 3rem); font-weight: 800; letter-spacing: -.02em; line-height: 1.1; margin: 10px 0 40px; }
     .about { display: grid; grid-template-columns: 1.3fr 1fr; gap: 48px; align-items: start; }
@@ -210,8 +240,8 @@
 </head>
 <body>
   <header class="hero">
-    <div class="gridbg"></div>
-    <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
+    <div class="gridbg" data-py="-.2"></div>
+    <div class="blob b1" data-py="-.45"></div><div class="blob b2" data-py="-.25"></div><div class="blob b3" data-py="-.6"></div>
     <div class="wrap">
       <h1>I build software that's <span class="grad">simple to use</span><br />and <span class="grad">built to last.</span></h1>
 
@@ -295,113 +325,127 @@
     </div>
   </header>
 
-  <main class="wrap">
-    <section id="about" class="reveal">
-      <span class="eyebrow">About me</span>
-      <h2>Engineer by trade.<br /><span class="grad">Problem solver by nature.</span></h2>
-      <div class="about">
-        <div>
-          <p>I'm a software engineer at <strong>Qualytics</strong> with a strong background in <strong>data engineering</strong>. That background shapes how I build: I care about quality, reliability and the details that make a platform a pleasure to use.</p>
-          <p>I work across the whole development lifecycle, from shaping an idea to shipping it in production, and I'm always looking for better ways to improve the products I work on.</p>
-          <p>New technologies don't slow me down. I <strong>learn fast</strong>, <strong>adapt easily</strong>, and use AI tools every day to design, build and deliver features faster.</p>
-        </div>
-        <div class="values">
-          <div class="value"><i>✨</i><div><h3>Easy UX, robust platform</h3><p>Interfaces that feel simple, built on foundations that scale.</p></div></div>
-          <div class="value"><i>📊</i><div><h3>Data-minded</h3><p>Integrations, pipelines and reliability come naturally.</p></div></div>
-          <div class="value"><i>⚡</i><div><h3>Fast learner</h3><p>Comfortable picking up whatever the project needs.</p></div></div>
-          <div class="value"><i>🤖</i><div><h3>AI-assisted delivery</h3><p>Using AI daily to move from idea to production faster.</p></div></div>
-        </div>
-      </div>
-    </section>
-
-    <section id="stack" class="reveal">
-      <span class="eyebrow">Tech stack</span>
-      <h2>The tools I <span class="grad">ship with.</span></h2>
-      <div class="stack">
-          <div class="chip"><img src="https://skillicons.dev/icons?i=python" alt="" />Python</div>
-          <div class="chip"><img src="https://skillicons.dev/icons?i=fastapi" alt="" />FastAPI</div>
-          <div class="chip"><img src="https://skillicons.dev/icons?i=ts" alt="" />TypeScript</div>
-          <div class="chip"><img src="https://skillicons.dev/icons?i=vue" alt="" />Vue.js</div>
-          <div class="chip"><img src="https://raw.githubusercontent.com/Hitsu-360/Hitsu-360/main/assets/snowflake.svg" alt="" />Snowflake</div>
-          <div class="chip"><img src="https://raw.githubusercontent.com/Hitsu-360/Hitsu-360/main/assets/dbt.svg" alt="" />dbt</div>
-          <div class="chip"><img src="https://skillicons.dev/icons?i=gcp" alt="" />BigQuery</div>
-          <div class="chip"><img src="https://skillicons.dev/icons?i=postgres" alt="" />PostgreSQL</div>
-          <div class="chip"><img src="https://skillicons.dev/icons?i=aws" alt="" />AWS</div>
-          <div class="chip"><img src="https://skillicons.dev/icons?i=docker" alt="" />Docker</div>
-          <div class="chip"><img src="https://skillicons.dev/icons?i=githubactions" alt="" />GitHub Actions</div>
-          <div class="chip"><img src="https://skillicons.dev/icons?i=git" alt="" />Git</div>
-        </div>
-    </section>
-
-    <section id="projects" class="reveal">
-      <span class="eyebrow">Projects</span>
-      <h2>Things I've <span class="grad">built lately.</span></h2>
-      <div class="project">
-        <a class="shot" href="https://hitsu-data-lens.vercel.app"><img src="assets/data-lens.webp" alt="DataLens results page showing a quality score and detected issues" loading="lazy" /></a>
-        <div class="body">
-          <h3>DataLens</h3>
-          <p>A data quality tool for CSV files. Upload a dataset and it scores its quality, points out what needs fixing, suggests validation rules from the data itself and shows exactly which rows break them.</p>
-          <ul>
-            <li>Automatic detection of missing values, duplicates, outliers, mixed types and inconsistent formats.</li>
-            <li>Suggested rules that run as a dry run first, plus a workbench with 8 rule types.</li>
-            <li>Row-level drill-down that explains each failing cell in plain words.</li>
-          </ul>
-          <div class="tags"><span class="tag">Vue 3</span><span class="tag">TypeScript</span><span class="tag">Python</span><span class="tag">FastAPI</span><span class="tag">pandas</span><span class="tag">Vercel</span></div>
-          <div class="ctas"><a class="btn primary" href="https://hitsu-data-lens.vercel.app">Try the live demo →</a></div>
-        </div>
-      </div>
-    </section>
-
-    <section id="experience" class="reveal">
-      <span class="eyebrow">Experience</span>
-      <h2>A decade of <span class="grad">building and shipping.</span></h2>
-      <div class="timeline">
-        <div class="job">
-          <div class="when">2023 — Present</div>
+  <main>
+    <section id="about" class="band">
+      <div class="deco" aria-hidden="true"><i class="orbit r1" data-py=".22"></i><i class="dots d1" data-py="-.18"></i></div>
+      <div class="wrap reveal">
+        <span class="eyebrow">About me</span>
+        <h2>Engineer by trade.<br /><span class="grad">Problem solver by nature.</span></h2>
+        <div class="about">
           <div>
-            <h3>Software Engineer</h3>
-            <p class="org">Qualytics · Remote</p>
-            <ul>
-              <li>Own features across the full lifecycle, from frontend to backend, delivering high-quality software that expands the platform's capabilities.</li>
-              <li>Build integrations with modern data warehouses and storage platforms.</li>
-              <li>Ship continuously through automated CI/CD pipelines, with AI-assisted development.</li>
-            </ul>
-            <div class="tags"><span class="tag">Vue.js</span><span class="tag">TypeScript</span><span class="tag">Python</span><span class="tag">FastAPI</span><span class="tag">CI/CD</span></div>
+            <p>I'm a software engineer at <strong>Qualytics</strong> with a strong background in <strong>data engineering</strong>. That background shapes how I build: I care about quality, reliability and the details that make a platform a pleasure to use.</p>
+            <p>I work across the whole development lifecycle, from shaping an idea to shipping it in production, and I'm always looking for better ways to improve the products I work on.</p>
+            <p>New technologies don't slow me down. I <strong>learn fast</strong>, <strong>adapt easily</strong>, and use AI tools every day to design, build and deliver features faster.</p>
           </div>
-        </div>
-        <div class="job">
-          <div class="when">2018 — 2022</div>
-          <div>
-            <h3>Data Engineer &amp; Full Stack Developer</h3>
-            <p class="org">Consulting</p>
-            <ul>
-              <li>Designed ELT pipelines from APIs, SFTP servers and databases into cloud data warehouses, with transformations, tests and documentation in dbt.</li>
-              <li>Built serverless Python functions on AWS and set up CI/CD and Docker-based development environments.</li>
-              <li>Delivered web and desktop applications and REST APIs across several stacks for multiple clients.</li>
-            </ul>
-            <div class="tags"><span class="tag">dbt</span><span class="tag">Snowflake</span><span class="tag">Airflow</span><span class="tag">AWS Lambda</span><span class="tag">GitHub Actions</span></div>
-          </div>
-        </div>
-        <div class="job">
-          <div class="when">2016 — 2018</div>
-          <div>
-            <h3>Software Development Intern</h3>
-            <p class="org">Public sector</p>
-            <ul>
-              <li>Built frontend and backend features for internal web applications.</li>
-            </ul>
-            <div class="tags"><span class="tag">JavaScript</span><span class="tag">Java</span><span class="tag">Spring</span></div>
+          <div class="values">
+            <div class="value"><i>✨</i><div><h3>Easy UX, robust platform</h3><p>Interfaces that feel simple, built on foundations that scale.</p></div></div>
+            <div class="value"><i>📊</i><div><h3>Data-minded</h3><p>Integrations, pipelines and reliability come naturally.</p></div></div>
+            <div class="value"><i>⚡</i><div><h3>Fast learner</h3><p>Comfortable picking up whatever the project needs.</p></div></div>
+            <div class="value"><i>🤖</i><div><h3>AI-assisted delivery</h3><p>Using AI daily to move from idea to production faster.</p></div></div>
           </div>
         </div>
       </div>
     </section>
 
-    <div class="cta reveal">
-      <h2>Have a product to <span class="grad">build?</span></h2>
-      <p>Let's talk about how I can help your team ship it.</p>
-      <div class="ctas">
-        <a class="btn primary" href="https://www.linkedin.com/in/leandro-cavalcanti-a39202165/">Connect on LinkedIn →</a>
-        <a class="btn" href="https://github.com/Hitsu-360">View GitHub</a>
+    <section id="stack">
+      <div class="deco" aria-hidden="true"><i class="glow g1" data-py="-.25"></i><i class="orbit r2" data-py=".15"></i></div>
+      <div class="wrap reveal">
+        <span class="eyebrow">Tech stack</span>
+        <h2>The tools I <span class="grad">ship with.</span></h2>
+        <div class="stack">
+            <div class="chip"><img src="https://skillicons.dev/icons?i=python" alt="" />Python</div>
+            <div class="chip"><img src="https://skillicons.dev/icons?i=fastapi" alt="" />FastAPI</div>
+            <div class="chip"><img src="https://skillicons.dev/icons?i=ts" alt="" />TypeScript</div>
+            <div class="chip"><img src="https://skillicons.dev/icons?i=vue" alt="" />Vue.js</div>
+            <div class="chip"><img src="https://raw.githubusercontent.com/Hitsu-360/Hitsu-360/main/assets/snowflake.svg" alt="" />Snowflake</div>
+            <div class="chip"><img src="https://raw.githubusercontent.com/Hitsu-360/Hitsu-360/main/assets/dbt.svg" alt="" />dbt</div>
+            <div class="chip"><img src="https://skillicons.dev/icons?i=gcp" alt="" />BigQuery</div>
+            <div class="chip"><img src="https://skillicons.dev/icons?i=postgres" alt="" />PostgreSQL</div>
+            <div class="chip"><img src="https://skillicons.dev/icons?i=aws" alt="" />AWS</div>
+            <div class="chip"><img src="https://skillicons.dev/icons?i=docker" alt="" />Docker</div>
+            <div class="chip"><img src="https://skillicons.dev/icons?i=githubactions" alt="" />GitHub Actions</div>
+            <div class="chip"><img src="https://skillicons.dev/icons?i=git" alt="" />Git</div>
+          </div>
+      </div>
+    </section>
+
+    <section id="projects" class="band">
+      <div class="deco" aria-hidden="true"><i class="orbit r3" data-py=".2"></i><i class="dots d2" data-py="-.22"></i></div>
+      <div class="wrap reveal">
+        <span class="eyebrow">Projects</span>
+        <h2>Things I've <span class="grad">built lately.</span></h2>
+        <div class="project">
+          <a class="shot" href="https://hitsu-data-lens.vercel.app"><img src="assets/data-lens.webp" alt="DataLens results page showing a quality score and detected issues" loading="lazy" /></a>
+          <div class="body">
+            <h3>DataLens</h3>
+            <p>A data quality tool for CSV files. Upload a dataset and it scores its quality, points out what needs fixing, suggests validation rules from the data itself and shows exactly which rows break them.</p>
+            <ul>
+              <li>Automatic detection of missing values, duplicates, outliers, mixed types and inconsistent formats.</li>
+              <li>Suggested rules that run as a dry run first, plus a workbench with 8 rule types.</li>
+              <li>Row-level drill-down that explains each failing cell in plain words.</li>
+            </ul>
+            <div class="tags"><span class="tag">Vue 3</span><span class="tag">TypeScript</span><span class="tag">Python</span><span class="tag">FastAPI</span><span class="tag">pandas</span><span class="tag">Vercel</span></div>
+            <div class="ctas"><a class="btn primary" href="https://hitsu-data-lens.vercel.app">Try the live demo →</a></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="experience">
+      <div class="deco" aria-hidden="true"><i class="glow g2" data-py="-.2"></i><i class="dots d3" data-py=".12"></i></div>
+      <div class="wrap reveal">
+        <span class="eyebrow">Experience</span>
+        <h2>A decade of <span class="grad">building and shipping.</span></h2>
+        <div class="timeline">
+          <div class="job">
+            <div class="when">2023 — Present</div>
+            <div>
+              <h3>Software Engineer</h3>
+              <p class="org">Qualytics · Remote</p>
+              <ul>
+                <li>Own features across the full lifecycle, from frontend to backend, delivering high-quality software that expands the platform's capabilities.</li>
+                <li>Build integrations with modern data warehouses and storage platforms.</li>
+                <li>Ship continuously through automated CI/CD pipelines, with AI-assisted development.</li>
+              </ul>
+              <div class="tags"><span class="tag">Vue.js</span><span class="tag">TypeScript</span><span class="tag">Python</span><span class="tag">FastAPI</span><span class="tag">CI/CD</span></div>
+            </div>
+          </div>
+          <div class="job">
+            <div class="when">2018 — 2022</div>
+            <div>
+              <h3>Data Engineer &amp; Full Stack Developer</h3>
+              <p class="org">Consulting</p>
+              <ul>
+                <li>Designed ELT pipelines from APIs, SFTP servers and databases into cloud data warehouses, with transformations, tests and documentation in dbt.</li>
+                <li>Built serverless Python functions on AWS and set up CI/CD and Docker-based development environments.</li>
+                <li>Delivered web and desktop applications and REST APIs across several stacks for multiple clients.</li>
+              </ul>
+              <div class="tags"><span class="tag">dbt</span><span class="tag">Snowflake</span><span class="tag">Airflow</span><span class="tag">AWS Lambda</span><span class="tag">GitHub Actions</span></div>
+            </div>
+          </div>
+          <div class="job">
+            <div class="when">2016 — 2018</div>
+            <div>
+              <h3>Software Development Intern</h3>
+              <p class="org">Public sector</p>
+              <ul>
+                <li>Built frontend and backend features for internal web applications.</li>
+              </ul>
+              <div class="tags"><span class="tag">JavaScript</span><span class="tag">Java</span><span class="tag">Spring</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="wrap">
+      <div class="cta reveal">
+        <h2>Have a product to <span class="grad">build?</span></h2>
+        <p>Let's talk about how I can help your team ship it.</p>
+        <div class="ctas">
+          <a class="btn primary" href="https://www.linkedin.com/in/leandro-cavalcanti-a39202165/">Connect on LinkedIn →</a>
+          <a class="btn" href="https://github.com/Hitsu-360">View GitHub</a>
+        </div>
       </div>
     </div>
   </main>
@@ -427,6 +471,25 @@
     }
     const io = new IntersectionObserver(es => es.forEach(e => e.isIntersecting && e.target.classList.add('in')), { threshold: .12 });
     document.querySelectorAll('.reveal').forEach(n => io.observe(n));
+
+    // Parallax: each [data-py] layer shifts by its section's distance from the viewport center (hero: from the top).
+    if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      const layers = [...document.querySelectorAll('[data-py]')].map(el => ({ el, box: el.closest('section, header'), y: +el.dataset.py }));
+      let queued = false;
+      const update = () => {
+        queued = false;
+        const vh = innerHeight;
+        layers.forEach(({ el, box, y }) => {
+          const r = box.getBoundingClientRect();
+          if (r.bottom < 0 || r.top > vh) return;
+          const d = box.tagName === 'HEADER' ? r.top : r.top + r.height / 2 - vh / 2;
+          el.style.translate = `0 ${(d * y).toFixed(1)}px`;
+        });
+      };
+      addEventListener('scroll', () => { if (!queued) { queued = true; requestAnimationFrame(update); } }, { passive: true });
+      addEventListener('resize', update);
+      update();
+    }
 
     (() => {
       const screen = document.getElementById('screen'), scenes = [...screen.querySelectorAll('.scene')], bar = document.getElementById('bar');
