@@ -70,6 +70,17 @@
     .main .chip { padding: 20px; font-size: 1.05rem; }
     .main .chip img { width: 40px; height: 40px; }
 
+    .project { background: var(--surface); border: 1px solid var(--border); border-radius: 22px; overflow: hidden; display: grid; grid-template-columns: 1.15fr 1fr; transition: border-color .2s; }
+    .project:hover { border-color: var(--green); }
+    .project .shot { display: block; background: #111; border-right: 1px solid var(--border); }
+    .project .shot img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: top left; }
+    .project .body { padding: 32px; display: flex; flex-direction: column; gap: 14px; }
+    .project h3 { font-size: 1.5rem; }
+    .project p { color: var(--muted); }
+    .project ul { color: var(--muted); padding-left: 18px; }
+    .project li { margin-bottom: 6px; }
+    .project .ctas { justify-content: flex-start; margin-top: 6px; }
+
     .timeline { display: flex; flex-direction: column; gap: 22px; }
     .job { background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 28px; display: grid; grid-template-columns: 180px 1fr; gap: 24px; transition: border-color .2s; }
     .job:hover { border-color: var(--green); }
@@ -189,6 +200,9 @@
       .about { grid-template-columns: 1fr; }
       .screen-wrap { margin: 0 -8px; width: calc(100% + 16px); }
       .job { grid-template-columns: 1fr; gap: 8px; padding: 22px; }
+      .project { grid-template-columns: 1fr; }
+      .project .shot { border-right: none; border-bottom: 1px solid var(--border); }
+      .project .body { padding: 22px; }
       .stats { grid-template-columns: 1fr; gap: 18px; margin-top: 44px; }
       section { padding: 72px 0; }
     }
@@ -317,6 +331,25 @@
           <div class="chip"><img src="https://skillicons.dev/icons?i=githubactions" alt="" />GitHub Actions</div>
           <div class="chip"><img src="https://skillicons.dev/icons?i=git" alt="" />Git</div>
         </div>
+    </section>
+
+    <section id="projects" class="reveal">
+      <span class="eyebrow">Projects</span>
+      <h2>Things I've <span class="grad">built lately.</span></h2>
+      <div class="project">
+        <a class="shot" href="https://hitsu-data-lens.vercel.app"><img src="assets/data-lens.webp" alt="DataLens results page showing a quality score and detected issues" loading="lazy" /></a>
+        <div class="body">
+          <h3>DataLens</h3>
+          <p>A data quality tool for CSV files. Upload a dataset and it scores its quality, points out what needs fixing, suggests validation rules from the data itself and shows exactly which rows break them.</p>
+          <ul>
+            <li>Automatic detection of missing values, duplicates, outliers, mixed types and inconsistent formats.</li>
+            <li>Suggested rules that run as a dry run first, plus a workbench with 8 rule types.</li>
+            <li>Row-level drill-down that explains each failing cell in plain words.</li>
+          </ul>
+          <div class="tags"><span class="tag">Vue 3</span><span class="tag">TypeScript</span><span class="tag">Python</span><span class="tag">FastAPI</span><span class="tag">pandas</span><span class="tag">Vercel</span></div>
+          <div class="ctas"><a class="btn primary" href="https://hitsu-data-lens.vercel.app">Try the live demo →</a></div>
+        </div>
+      </div>
     </section>
 
     <section id="experience" class="reveal">
