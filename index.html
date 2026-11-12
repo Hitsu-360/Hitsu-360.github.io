@@ -113,7 +113,20 @@
     .project ul { color: var(--muted); padding-left: 18px; }
     .project li { margin-bottom: 6px; }
     .project .ctas { justify-content: flex-start; margin-top: 6px; }
-    .project + .project { margin-top: 28px; }
+
+    /* Projects carousel: a scroll-snap track, so swipe and trackpad scrolling just work. */
+    .carousel-track { display: grid; grid-auto-flow: column; grid-auto-columns: 100%; gap: 24px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; overscroll-behavior-x: contain; scrollbar-width: none; border-radius: 22px; }
+    .carousel-track::-webkit-scrollbar { display: none; }
+    .carousel-track:focus-visible { outline: 2px solid var(--text); outline-offset: 4px; }
+    .carousel-track .project { scroll-snap-align: start; }
+    .carousel-nav { display: flex; align-items: center; justify-content: center; gap: 18px; margin-top: 24px; }
+    .carousel-btn { width: 46px; height: 46px; border-radius: 50%; border: none; background: #0a0a0a; color: #facc15; font-size: 1.2rem; cursor: pointer; transition: transform .2s, opacity .2s; }
+    .carousel-btn:hover:not(:disabled) { transform: translateY(-2px); }
+    .carousel-btn:disabled { opacity: .3; cursor: default; }
+    .carousel-dots { display: flex; gap: 8px; }
+    .carousel-dots button { width: 10px; height: 10px; padding: 0; border-radius: 999px; border: none; background: rgba(10,10,10,.28); cursor: pointer; transition: width .25s, background .25s; }
+    .carousel-dots button[aria-current="true"] { width: 28px; background: #0a0a0a; }
+    .carousel-count { font-family: "JetBrains Mono", monospace; font-size: .8rem; color: var(--muted); min-width: 3.5em; text-align: center; }
 
     .timeline { display: flex; flex-direction: column; gap: 22px; }
     .job { background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 28px; display: grid; grid-template-columns: 180px 1fr; gap: 24px; transition: border-color .2s; }
@@ -124,7 +137,8 @@
     .job ul { color: var(--muted); padding-left: 18px; margin-bottom: 14px; }
     .job li { margin-bottom: 6px; }
     .tags { display: flex; flex-wrap: wrap; gap: 8px; }
-    .tag { font-family: "JetBrains Mono", monospace; font-size: .75rem; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--border); color: var(--muted); }
+    .tag { font-family: "JetBrains Mono", monospace; font-size: .75rem; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--border); color: var(--muted); display: inline-flex; align-items: center; gap: 6px; }
+    .tag img { width: 13px; height: 13px; opacity: .8; }
 
     .cta { text-align: center; padding: 90px 20px; border: 1px solid var(--border); border-radius: 28px; background: radial-gradient(circle at top, rgba(250,204,21,.14), transparent 60%), var(--surface); margin-bottom: 80px; }
     .cta h2 { margin-bottom: 16px; }
@@ -229,7 +243,7 @@
 
     .reveal { opacity: 0; transform: translateY(24px); transition: opacity .7s ease, transform .7s ease; }
     .reveal.in { opacity: 1; transform: none; }
-    @media (prefers-reduced-motion: reduce) { .blob, .dot, .typed::after { animation: none; } .reveal { opacity: 1; transform: none; transition: none; } html { scroll-behavior: auto; } }
+    @media (prefers-reduced-motion: reduce) { .blob, .dot, .typed::after { animation: none; } .reveal { opacity: 1; transform: none; transition: none; } html { scroll-behavior: auto; } .carousel-track { scroll-behavior: auto; } }
     @media (max-width: 760px) {
       .about { grid-template-columns: 1fr; }
       .screen-wrap { margin: 0 -8px; width: calc(100% + 16px); }
@@ -378,32 +392,42 @@
       <div class="wrap reveal">
         <span class="eyebrow">Projects</span>
         <h2>Things I've <span class="grad">built lately.</span></h2>
-        <div class="project">
-          <a class="shot" href="https://hitsu-query-lens.vercel.app"><img src="assets/query-lens.webp" alt="QueryLens answering a question about monthly revenue with a line chart" loading="lazy" /></a>
-          <div class="body">
-            <h3>QueryLens</h3>
-            <p>Ask questions about a CSV file in plain English. An AI model writes the SQL, DuckDB runs it, and the answer comes back as a chart, a table or a single number. A companion to DataLens.</p>
-            <ul>
-              <li>Every answer shows its SQL, which you can edit and run again without the AI.</li>
-              <li>The AI sees column names and types, never the data, and queries run in a locked-down DuckDB sandbox.</li>
-              <li>Charts picked from the shape of the result, with a fallback across free Gemini models.</li>
-            </ul>
-            <div class="tags"><span class="tag">Vue 3</span><span class="tag">TypeScript</span><span class="tag">Python</span><span class="tag">FastAPI</span><span class="tag">DuckDB</span><span class="tag">Gemini API</span><span class="tag">Vercel</span></div>
-            <div class="ctas"><a class="btn primary" href="https://hitsu-query-lens.vercel.app">Try the live demo →</a></div>
+        <div class="carousel" role="region" aria-roledescription="carousel" aria-label="Projects">
+          <div class="carousel-track" id="project-track" tabindex="0">
+            <div class="project">
+              <a class="shot" href="https://hitsu-query-lens.vercel.app"><img src="assets/query-lens.webp" alt="QueryLens answering a question about monthly revenue with a line chart" loading="lazy" /></a>
+              <div class="body">
+                <h3>QueryLens</h3>
+                <p>Ask questions about a CSV file in plain English. An AI model writes the SQL, DuckDB runs it, and the answer comes back as a chart, a table or a single number. A companion to DataLens.</p>
+                <ul>
+                  <li>Every answer shows its SQL, which you can edit and run again without the AI.</li>
+                  <li>The AI sees column names and types, never the data, and queries run in a locked-down DuckDB sandbox.</li>
+                  <li>Charts picked from the shape of the result, with a fallback across free Gemini models.</li>
+                </ul>
+                <div class="tags"><span class="tag"><img src="https://cdn.jsdelivr.net/npm/simple-icons@13.21.0/icons/vuedotjs.svg" alt="" loading="lazy" />Vue 3</span><span class="tag"><img src="https://cdn.jsdelivr.net/npm/simple-icons@13.21.0/icons/typescript.svg" alt="" loading="lazy" />TypeScript</span><span class="tag"><img src="https://cdn.jsdelivr.net/npm/simple-icons@13.21.0/icons/python.svg" alt="" loading="lazy" />Python</span><span class="tag"><img src="https://cdn.jsdelivr.net/npm/simple-icons@13.21.0/icons/fastapi.svg" alt="" loading="lazy" />FastAPI</span><span class="tag"><img src="https://cdn.jsdelivr.net/npm/simple-icons@13.21.0/icons/duckdb.svg" alt="" loading="lazy" />DuckDB</span><span class="tag"><img src="https://cdn.jsdelivr.net/npm/simple-icons@13.21.0/icons/googlegemini.svg" alt="" loading="lazy" />Gemini API</span><span class="tag"><img src="https://cdn.jsdelivr.net/npm/simple-icons@13.21.0/icons/vercel.svg" alt="" loading="lazy" />Vercel</span></div>
+                <div class="ctas"><a class="btn primary" href="https://hitsu-query-lens.vercel.app">Try the live demo →</a></div>
+              </div>
+            </div>
+            <div class="project">
+              <a class="shot" href="https://hitsu-data-lens.vercel.app"><img src="assets/data-lens.webp" alt="DataLens results page showing a quality score and detected issues" loading="lazy" /></a>
+              <div class="body">
+                <h3>DataLens</h3>
+                <p>A data quality tool for CSV files. Upload a dataset and it scores its quality, points out what needs fixing, suggests validation rules from the data itself and shows exactly which rows break them.</p>
+                <ul>
+                  <li>Automatic detection of missing values, duplicates, outliers, mixed types and inconsistent formats.</li>
+                  <li>Suggested rules that run as a dry run first, plus a workbench with 8 rule types.</li>
+                  <li>Row-level drill-down that explains each failing cell in plain words.</li>
+                </ul>
+                <div class="tags"><span class="tag"><img src="https://cdn.jsdelivr.net/npm/simple-icons@13.21.0/icons/vuedotjs.svg" alt="" loading="lazy" />Vue 3</span><span class="tag"><img src="https://cdn.jsdelivr.net/npm/simple-icons@13.21.0/icons/typescript.svg" alt="" loading="lazy" />TypeScript</span><span class="tag"><img src="https://cdn.jsdelivr.net/npm/simple-icons@13.21.0/icons/python.svg" alt="" loading="lazy" />Python</span><span class="tag"><img src="https://cdn.jsdelivr.net/npm/simple-icons@13.21.0/icons/fastapi.svg" alt="" loading="lazy" />FastAPI</span><span class="tag"><img src="https://cdn.jsdelivr.net/npm/simple-icons@13.21.0/icons/pandas.svg" alt="" loading="lazy" />pandas</span><span class="tag"><img src="https://cdn.jsdelivr.net/npm/simple-icons@13.21.0/icons/vercel.svg" alt="" loading="lazy" />Vercel</span></div>
+                <div class="ctas"><a class="btn primary" href="https://hitsu-data-lens.vercel.app">Try the live demo →</a></div>
+              </div>
+            </div>
           </div>
-        </div>
-        <div class="project">
-          <a class="shot" href="https://hitsu-data-lens.vercel.app"><img src="assets/data-lens.webp" alt="DataLens results page showing a quality score and detected issues" loading="lazy" /></a>
-          <div class="body">
-            <h3>DataLens</h3>
-            <p>A data quality tool for CSV files. Upload a dataset and it scores its quality, points out what needs fixing, suggests validation rules from the data itself and shows exactly which rows break them.</p>
-            <ul>
-              <li>Automatic detection of missing values, duplicates, outliers, mixed types and inconsistent formats.</li>
-              <li>Suggested rules that run as a dry run first, plus a workbench with 8 rule types.</li>
-              <li>Row-level drill-down that explains each failing cell in plain words.</li>
-            </ul>
-            <div class="tags"><span class="tag">Vue 3</span><span class="tag">TypeScript</span><span class="tag">Python</span><span class="tag">FastAPI</span><span class="tag">pandas</span><span class="tag">Vercel</span></div>
-            <div class="ctas"><a class="btn primary" href="https://hitsu-data-lens.vercel.app">Try the live demo →</a></div>
+          <div class="carousel-nav">
+            <button class="carousel-btn" type="button" data-step="-1" aria-label="Previous project">←</button>
+            <div class="carousel-dots"></div>
+            <span class="carousel-count" aria-live="polite"></span>
+            <button class="carousel-btn" type="button" data-step="1" aria-label="Next project">→</button>
           </div>
         </div>
       </div>
@@ -508,6 +532,44 @@
       addEventListener('resize', update);
       update();
     }
+
+    // Projects carousel: arrows, dots and arrow keys move the scroll-snap track; off-screen cards are inert.
+    (() => {
+      const track = document.getElementById('project-track');
+      const slides = [...track.children], dots = track.parentElement.querySelector('.carousel-dots');
+      const count = track.parentElement.querySelector('.carousel-count'), [prev, next] = track.parentElement.querySelectorAll('.carousel-btn');
+      const smooth = matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
+      let index = 0;
+      slides.forEach((slide, i) => {
+        slide.setAttribute('role', 'group');
+        slide.setAttribute('aria-roledescription', 'slide');
+        slide.setAttribute('aria-label', `${i + 1} of ${slides.length}`);
+        const dot = document.createElement('button');
+        dot.type = 'button';
+        dot.setAttribute('aria-label', `Show ${slide.querySelector('h3').textContent}`);
+        dot.addEventListener('click', () => go(i));
+        dots.append(dot);
+      });
+      const go = i => track.scrollTo({ left: slides[Math.max(0, Math.min(i, slides.length - 1))].offsetLeft - slides[0].offsetLeft, behavior: smooth });
+      const sync = () => {
+        const step = slides.length > 1 ? slides[1].offsetLeft - slides[0].offsetLeft : 1;
+        index = Math.round(track.scrollLeft / step);
+        slides.forEach((slide, i) => { slide.inert = i !== index; });
+        [...dots.children].forEach((dot, i) => dot.setAttribute('aria-current', i === index));
+        count.textContent = `${index + 1} / ${slides.length}`;
+        prev.disabled = index === 0;
+        next.disabled = index === slides.length - 1;
+      };
+      let queued = false;
+      track.addEventListener('scroll', () => { if (!queued) { queued = true; requestAnimationFrame(() => { queued = false; sync(); }); } }, { passive: true });
+      prev.addEventListener('click', () => go(index - 1));
+      next.addEventListener('click', () => go(index + 1));
+      track.addEventListener('keydown', e => {
+        if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') { e.preventDefault(); go(index + (e.key === 'ArrowRight' ? 1 : -1)); }
+      });
+      addEventListener('resize', () => go(index));
+      sync();
+    })();
 
     (() => {
       const screen = document.getElementById('screen'), scenes = [...screen.querySelectorAll('.scene')], bar = document.getElementById('bar');
