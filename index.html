@@ -114,12 +114,14 @@
     .project li { margin-bottom: 6px; }
     .project .ctas { justify-content: flex-start; margin-top: 6px; }
 
-    /* Projects carousel: a scroll-snap track, so swipe and trackpad scrolling just work. It runs the full
-       screen width, starting in line with the content (1000px inside .wrap), so the next cards show on the right. */
-    .carousel-track { --edge: max(20px, calc((100vw - 1000px) / 2)); display: grid; grid-auto-flow: column; grid-auto-columns: min(820px, 86vw); gap: 24px; margin-inline: calc(50% - 50vw); padding-inline: var(--edge); scroll-padding-inline: var(--edge); overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; overscroll-behavior-x: contain; scrollbar-width: none; }
+    /* Projects carousel: a full-width scroll-snap track, so swipe and trackpad scrolling just work.
+       The current card snaps to the center (the end padding lets the first and last cards get there too);
+       when every card fits, the script adds .fits and they sit centered as a group. */
+    .carousel-track { --card: min(820px, 86vw); display: grid; grid-auto-flow: column; grid-auto-columns: var(--card); gap: 24px; margin-inline: calc(50% - 50vw); padding-inline: calc(50vw - var(--card) / 2); overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; overscroll-behavior-x: contain; scrollbar-width: none; }
+    .carousel-track.fits { justify-content: center; padding-inline: 20px; }
     .carousel-track::-webkit-scrollbar { display: none; }
     .carousel-track:focus-visible { outline: 2px solid var(--text); outline-offset: 4px; }
-    .carousel-track .project { scroll-snap-align: start; }
+    .carousel-track .project { scroll-snap-align: center; }
     .carousel-nav[hidden] { display: none; }
     .carousel-nav { display: flex; align-items: center; justify-content: center; gap: 18px; margin-top: 24px; }
     .carousel-btn { width: 46px; height: 46px; border-radius: 50%; border: none; background: #0a0a0a; color: #facc15; font-size: 1.2rem; cursor: pointer; transition: transform .2s, opacity .2s; }
@@ -535,46 +537,48 @@
       update();
     }
 
-    // Projects carousel: arrows, dots and arrow keys step the scroll-snap track one card at a time.
-    // Cards fully out of view are inert, and the controls hide when nothing needs scrolling.
+    // Projects carousel: arrows, dots and arrow keys bring a card to the center of the scroll-snap track.
+    // Cards fully out of view are inert, and the controls hide when every card fits.
     (() => {
       const track = document.getElementById('project-track'), carousel = track.parentElement;
       const slides = [...track.children], nav = carousel.querySelector('.carousel-nav'), dots = carousel.querySelector('.carousel-dots');
       const count = carousel.querySelector('.carousel-count'), [prev, next] = carousel.querySelectorAll('.carousel-btn');
       const smooth = matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
-      let index = 0, stops = 1;
+      let index = 0;
       slides.forEach((slide, i) => {
         slide.setAttribute('role', 'group');
         slide.setAttribute('aria-roledescription', 'slide');
         slide.setAttribute('aria-label', `${i + 1} of ${slides.length}`);
+        const dot = document.createElement('button');
+        dot.type = 'button';
+        dot.setAttribute('aria-label', `Show ${slide.querySelector('h3').textContent}`);
+        dot.addEventListener('click', () => go(i));
+        dots.append(dot);
       });
-      const step = () => slides.length > 1 ? slides[1].offsetLeft - slides[0].offsetLeft : track.clientWidth;
-      const maxScroll = () => track.scrollWidth - track.clientWidth;
-      const go = i => track.scrollTo({ left: Math.min(Math.max(0, Math.min(i, stops - 1)) * step(), maxScroll()), behavior: smooth });
+      const go = i => {
+        const slide = slides[Math.max(0, Math.min(i, slides.length - 1))];
+        const view = track.getBoundingClientRect(), r = slide.getBoundingClientRect();
+        track.scrollTo({ left: track.scrollLeft + r.left - view.left - (view.width - r.width) / 2, behavior: smooth });
+      };
+      // Centered as a group when every card fits between 20px margins; otherwise one card at a time.
+      const fit = () => {
+        const gap = parseFloat(getComputedStyle(track).columnGap) || 0;
+        track.classList.toggle('fits', slides.length * slides[0].offsetWidth + (slides.length - 1) * gap <= track.clientWidth - 40);
+      };
       const sync = () => {
-        const s = step(), max = maxScroll();
-        stops = Math.round(max / s) + 1;
-        index = track.scrollLeft >= max - 1 ? stops - 1 : Math.min(stops - 1, Math.round(track.scrollLeft / s));
-        if (dots.children.length !== stops) {
-          dots.replaceChildren(...Array.from({ length: stops }, (_, i) => {
-            const dot = document.createElement('button');
-            dot.type = 'button';
-            dot.setAttribute('aria-label', `Show ${slides[i].querySelector('h3').textContent}`);
-            dot.addEventListener('click', () => go(i));
-            return dot;
-          }));
-        }
-        const view = track.getBoundingClientRect();
-        slides.forEach(slide => {
-          const r = slide.getBoundingClientRect();
+        const view = track.getBoundingClientRect(), middle = view.left + view.width / 2, max = track.scrollWidth - track.clientWidth;
+        let best = Infinity;
+        slides.forEach((slide, i) => {
+          const r = slide.getBoundingClientRect(), d = Math.abs(r.left + r.width / 2 - middle);
+          if (d < best) { best = d; index = i; }
           slide.inert = r.right <= view.left + 1 || r.left >= view.right - 1;
         });
         [...dots.children].forEach((dot, i) => dot.setAttribute('aria-current', i === index));
-        count.textContent = `${index + 1} / ${stops}`;
-        prev.disabled = index === 0;
-        next.disabled = index === stops - 1;
-        nav.hidden = stops === 1;
-        track.tabIndex = stops === 1 ? -1 : 0;
+        count.textContent = `${index + 1} / ${slides.length}`;
+        prev.disabled = track.scrollLeft <= 1;
+        next.disabled = track.scrollLeft >= max - 1;
+        nav.hidden = max <= 1;
+        track.tabIndex = max <= 1 ? -1 : 0;
       };
       let queued = false;
       track.addEventListener('scroll', () => { if (!queued) { queued = true; requestAnimationFrame(() => { queued = false; sync(); }); } }, { passive: true });
@@ -583,7 +587,8 @@
       track.addEventListener('keydown', e => {
         if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') { e.preventDefault(); go(index + (e.key === 'ArrowRight' ? 1 : -1)); }
       });
-      addEventListener('resize', () => { sync(); go(index); });
+      addEventListener('resize', () => { fit(); go(index); sync(); });
+      fit();
       sync();
     })();
 
