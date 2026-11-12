@@ -115,18 +115,21 @@
     .project .ctas { justify-content: flex-start; margin-top: 6px; }
 
     /* Projects carousel: a full-width scroll-snap track, so swipe and trackpad scrolling just work.
-       The current card snaps to the center (the end padding lets the first and last cards get there too);
-       when every card fits, the script adds .fits and they sit centered as a group. */
-    .carousel-track { --card: min(820px, 86vw); display: grid; grid-auto-flow: column; grid-auto-columns: var(--card); gap: 24px; margin-inline: calc(50% - 50vw); padding-inline: calc(50vw - var(--card) / 2); overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; overscroll-behavior-x: contain; scrollbar-width: none; }
+       The script puts copies of the cards on both sides, so it loops and the neighbours always show
+       cut off at the screen edges (about half of them on laptop and desktop widths, where the card
+       narrows a little to make room). When every card fits, it adds .fits and they sit centered as a group. */
+    .carousel-track { --gap: clamp(14px, 4.5vw, 72px); --card: clamp(min(680px, 84vw), (100vw - 2 * var(--gap)) / 1.9, 820px); display: grid; grid-auto-flow: column; grid-auto-columns: var(--card); gap: var(--gap); margin-inline: calc(50% - 50vw); padding-inline: calc(50vw - var(--card) / 2); overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; overscroll-behavior-x: contain; scrollbar-width: none; }
     .carousel-track.fits { justify-content: center; padding-inline: 20px; }
+    .carousel-track.fits .clone { display: none; }
     .carousel-track::-webkit-scrollbar { display: none; }
     .carousel-track:focus-visible { outline: 2px solid var(--text); outline-offset: 4px; }
     .carousel-track .project { scroll-snap-align: center; }
     .carousel-nav[hidden] { display: none; }
     .carousel-nav { display: flex; align-items: center; justify-content: center; gap: 18px; margin-top: 24px; }
     .carousel-btn { width: 46px; height: 46px; border-radius: 50%; border: none; background: #0a0a0a; color: #facc15; font-size: 1.2rem; cursor: pointer; transition: transform .2s, opacity .2s; }
-    .carousel-btn:hover:not(:disabled) { transform: translateY(-2px); }
-    .carousel-btn:disabled { opacity: .3; cursor: default; }
+    .carousel-btn:hover { transform: translateY(-2px); }
+    .carousel-btn:focus-visible { outline: 2px solid #0a0a0a; outline-offset: 3px; }
+    .carousel-toggle { width: 38px; height: 38px; font-size: .85rem; background: transparent; color: #0a0a0a; border: 2px solid #0a0a0a; }
     .carousel-dots { display: flex; gap: 8px; }
     .carousel-dots button { width: 10px; height: 10px; padding: 0; border-radius: 999px; border: none; background: rgba(10,10,10,.28); cursor: pointer; transition: width .25s, background .25s; }
     .carousel-dots button[aria-current="true"] { width: 28px; background: #0a0a0a; }
@@ -446,6 +449,7 @@
             <div class="carousel-dots"></div>
             <span class="carousel-count" aria-live="polite"></span>
             <button class="carousel-btn" type="button" data-step="1" aria-label="Next project">→</button>
+            <button class="carousel-btn carousel-toggle" type="button" aria-label="Pause the project rotation">❚❚</button>
           </div>
         </div>
       </div>
@@ -551,59 +555,113 @@
       update();
     }
 
-    // Projects carousel: arrows, dots and arrow keys bring a card to the center of the scroll-snap track.
-    // Cards fully out of view are inert, and the controls hide when every card fits.
+    // Projects carousel: a looping scroll-snap track. Copies of the cards sit before and after the real
+    // ones; once a move settles on a copy, the track jumps to the matching real card without animating.
+    // It rolls on by itself every few seconds and stops while the mouse is over it, while it has keyboard
+    // focus, while it's off screen, or after the pause button. Reduced motion starts it paused.
     (() => {
       const track = document.getElementById('project-track'), carousel = track.parentElement;
-      const slides = [...track.children], nav = carousel.querySelector('.carousel-nav'), dots = carousel.querySelector('.carousel-dots');
-      const count = carousel.querySelector('.carousel-count'), [prev, next] = carousel.querySelectorAll('.carousel-btn');
-      const smooth = matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
-      let index = 0;
+      const slides = [...track.children], n = slides.length;
+      const nav = carousel.querySelector('.carousel-nav'), dots = carousel.querySelector('.carousel-dots');
+      const count = carousel.querySelector('.carousel-count'), toggle = carousel.querySelector('.carousel-toggle');
+      const [prev, next] = carousel.querySelectorAll('.carousel-btn[data-step]');
+      const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches, smooth = reduce ? 'auto' : 'smooth';
+      const DELAY = 5000;
+      const copies = () => slides.map(slide => {
+        const copy = slide.cloneNode(true);
+        copy.classList.add('clone');
+        copy.setAttribute('aria-hidden', 'true');
+        copy.querySelectorAll('a, button').forEach(el => { el.tabIndex = -1; });
+        return copy;
+      });
+      track.prepend(...copies());
+      track.append(...copies());
+      const all = [...track.children];
+      let current = n;
       slides.forEach((slide, i) => {
         slide.setAttribute('role', 'group');
         slide.setAttribute('aria-roledescription', 'slide');
-        slide.setAttribute('aria-label', `${i + 1} of ${slides.length}`);
+        slide.setAttribute('aria-label', `${i + 1} of ${n}`);
         const dot = document.createElement('button');
         dot.type = 'button';
         dot.setAttribute('aria-label', `Show ${slide.querySelector('h3').textContent}`);
-        dot.addEventListener('click', () => go(i));
+        dot.addEventListener('click', () => go(n + i));
         dots.append(dot);
       });
-      const go = i => {
-        const slide = slides[Math.max(0, Math.min(i, slides.length - 1))];
+      const looping = () => !track.classList.contains('fits');
+      const center = (slide, behavior) => {
         const view = track.getBoundingClientRect(), r = slide.getBoundingClientRect();
-        track.scrollTo({ left: track.scrollLeft + r.left - view.left - (view.width - r.width) / 2, behavior: smooth });
+        track.scrollTo({ left: track.scrollLeft + r.left - view.left - (view.width - r.width) / 2, behavior });
       };
+      const go = i => { if (looping()) { center(all[Math.max(0, Math.min(i, all.length - 1))], smooth); schedule(); } };
       // Centered as a group when every card fits between 20px margins; otherwise one card at a time.
       const fit = () => {
         const gap = parseFloat(getComputedStyle(track).columnGap) || 0;
-        track.classList.toggle('fits', slides.length * slides[0].offsetWidth + (slides.length - 1) * gap <= track.clientWidth - 40);
+        track.classList.toggle('fits', n * slides[0].offsetWidth + (n - 1) * gap <= track.clientWidth - 40);
       };
       const sync = () => {
-        const view = track.getBoundingClientRect(), middle = view.left + view.width / 2, max = track.scrollWidth - track.clientWidth;
+        const view = track.getBoundingClientRect(), middle = view.left + view.width / 2;
         let best = Infinity;
-        slides.forEach((slide, i) => {
+        (looping() ? all : slides).forEach(slide => {
           const r = slide.getBoundingClientRect(), d = Math.abs(r.left + r.width / 2 - middle);
-          if (d < best) { best = d; index = i; }
-          slide.inert = r.right <= view.left + 1 || r.left >= view.right - 1;
+          if (d < best) { best = d; current = all.indexOf(slide); }
         });
+        slides.forEach(slide => {
+          const r = slide.getBoundingClientRect();
+          slide.inert = looping() && (r.right <= view.left + 1 || r.left >= view.right - 1);
+        });
+        const index = current % n;
         [...dots.children].forEach((dot, i) => dot.setAttribute('aria-current', i === index));
-        count.textContent = `${index + 1} / ${slides.length}`;
-        prev.disabled = track.scrollLeft <= 1;
-        next.disabled = track.scrollLeft >= max - 1;
-        nav.hidden = max <= 1;
-        track.tabIndex = max <= 1 ? -1 : 0;
+        count.textContent = `${index + 1} / ${n}`;
+        nav.hidden = !looping();
+        track.tabIndex = looping() ? 0 : -1;
       };
-      let queued = false;
-      track.addEventListener('scroll', () => { if (!queued) { queued = true; requestAnimationFrame(() => { queued = false; sync(); }); } }, { passive: true });
-      prev.addEventListener('click', () => go(index - 1));
-      next.addEventListener('click', () => go(index + 1));
+      // After a move ends on a copy, swap in the real card at the same spot.
+      const settle = () => {
+        sync();
+        if (looping() && (current < n || current >= 2 * n)) {
+          const shift = all[n].offsetLeft - all[0].offsetLeft;
+          track.scrollTo({ left: track.scrollLeft + (current < n ? shift : -shift), behavior: 'instant' });
+          sync();
+        }
+      };
+      let queued = false, settleTimer;
+      track.addEventListener('scroll', () => {
+        if (!queued) { queued = true; requestAnimationFrame(() => { queued = false; sync(); }); }
+        clearTimeout(settleTimer);
+        settleTimer = setTimeout(settle, 150);
+      }, { passive: true });
+      prev.addEventListener('click', () => go(current - 1));
+      next.addEventListener('click', () => go(current + 1));
       track.addEventListener('keydown', e => {
-        if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') { e.preventDefault(); go(index + (e.key === 'ArrowRight' ? 1 : -1)); }
+        if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') { e.preventDefault(); go(current + (e.key === 'ArrowRight' ? 1 : -1)); }
       });
-      addEventListener('resize', () => { fit(); go(index); sync(); });
+
+      // Auto-roll
+      let paused = reduce, hovering = false, focused = false, onScreen = false, timer;
+      const playing = () => !paused && !hovering && !focused && onScreen && !document.hidden && looping();
+      function schedule() { clearTimeout(timer); timer = setTimeout(() => { if (playing()) go(current + 1); else schedule(); }, DELAY); }
+      const showToggle = () => {
+        toggle.textContent = paused ? '▶' : '❚❚';
+        toggle.setAttribute('aria-label', paused ? 'Play the project rotation' : 'Pause the project rotation');
+      };
+      toggle.addEventListener('click', () => { paused = !paused; showToggle(); schedule(); });
+      // Only a real mouse pauses it: touch screens fire mouse events after a tap and never "leave".
+      const canHover = matchMedia('(hover: hover)');
+      carousel.addEventListener('pointerenter', e => { hovering = e.pointerType === 'mouse' && canHover.matches; });
+      carousel.addEventListener('pointerleave', () => { hovering = false; schedule(); });
+      carousel.addEventListener('focusin', e => { focused = e.target.matches(':focus-visible'); });
+      carousel.addEventListener('focusout', e => { if (!carousel.contains(e.relatedTarget)) { focused = false; schedule(); } });
+      // A swipe or trackpad scroll restarts the countdown, so it never moves under the user's hand.
+      ['pointerdown', 'wheel', 'touchstart'].forEach(type => track.addEventListener(type, schedule, { passive: true }));
+      new IntersectionObserver(([entry]) => { onScreen = entry.isIntersecting; schedule(); }, { threshold: 0.25 }).observe(track);
+
+      addEventListener('resize', () => { fit(); center(all[current], 'instant'); sync(); });
       fit();
+      center(all[current], 'instant');
       sync();
+      showToggle();
+      schedule();
     })();
 
     (() => {
