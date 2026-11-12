@@ -103,22 +103,26 @@
     .main .chip { padding: 20px; font-size: 1.05rem; }
     .main .chip img { width: 40px; height: 40px; }
 
-    .project { background: var(--surface); border: 1px solid var(--border); border-radius: 22px; overflow: hidden; display: grid; grid-template-columns: 1.15fr 1fr; transition: border-color .2s; }
+    .project { background: var(--surface); border: 1px solid var(--border); border-radius: 22px; overflow: hidden; display: flex; flex-direction: column; transition: border-color .2s; }
     .project:hover { border-color: var(--green); }
-    .project .shot { display: block; background: #111; border-right: 1px solid var(--border); }
+    .project .shot { display: block; aspect-ratio: 16 / 9; background: #111; border-bottom: 1px solid var(--border); }
     .project .shot img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: top left; }
-    .project .body { padding: 32px; display: flex; flex-direction: column; gap: 14px; }
+    .project .body { flex: 1; padding: 28px; display: flex; flex-direction: column; gap: 14px; }
     .project h3 { font-size: 1.5rem; }
     .project p { color: var(--muted); }
     .project ul { color: var(--muted); padding-left: 18px; }
     .project li { margin-bottom: 6px; }
-    .project .ctas { justify-content: flex-start; margin-top: 6px; }
+    /* The button sits at the bottom so side-by-side cards line up. */
+    .project .ctas { justify-content: flex-start; margin-top: auto; padding-top: 6px; }
 
-    /* Projects carousel: a scroll-snap track, so swipe and trackpad scrolling just work. */
-    .carousel-track { display: grid; grid-auto-flow: column; grid-auto-columns: 100%; gap: 24px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; overscroll-behavior-x: contain; scrollbar-width: none; border-radius: 22px; }
+    /* Projects carousel: a scroll-snap track, so swipe and trackpad scrolling just work.
+       Two cards side by side on wide screens; on narrow ones the next card peeks in. */
+    .carousel-track { display: grid; grid-auto-flow: column; grid-auto-columns: calc((100% - 24px) / 2); gap: 24px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; overscroll-behavior-x: contain; scrollbar-width: none; border-radius: 22px; }
     .carousel-track::-webkit-scrollbar { display: none; }
     .carousel-track:focus-visible { outline: 2px solid var(--text); outline-offset: 4px; }
     .carousel-track .project { scroll-snap-align: start; }
+    @media (max-width: 900px) { .carousel-track { grid-auto-columns: 86%; } }
+    .carousel-nav[hidden] { display: none; }
     .carousel-nav { display: flex; align-items: center; justify-content: center; gap: 18px; margin-top: 24px; }
     .carousel-btn { width: 46px; height: 46px; border-radius: 50%; border: none; background: #0a0a0a; color: #facc15; font-size: 1.2rem; cursor: pointer; transition: transform .2s, opacity .2s; }
     .carousel-btn:hover:not(:disabled) { transform: translateY(-2px); }
@@ -248,8 +252,6 @@
       .about { grid-template-columns: 1fr; }
       .screen-wrap { margin: 0 -8px; width: calc(100% + 16px); }
       .job { grid-template-columns: 1fr; gap: 8px; padding: 22px; }
-      .project { grid-template-columns: 1fr; }
-      .project .shot { border-right: none; border-bottom: 1px solid var(--border); }
       .project .body { padding: 22px; }
       .stats { grid-template-columns: 1fr; gap: 18px; margin-top: 44px; }
       section { padding: 72px 0; }
@@ -533,32 +535,41 @@
       update();
     }
 
-    // Projects carousel: arrows, dots and arrow keys move the scroll-snap track; off-screen cards are inert.
+    // Projects carousel: arrows, dots and arrow keys step the scroll-snap track one card at a time.
+    // Cards that are out of view are inert, and the controls hide when every card already fits.
     (() => {
-      const track = document.getElementById('project-track');
-      const slides = [...track.children], dots = track.parentElement.querySelector('.carousel-dots');
-      const count = track.parentElement.querySelector('.carousel-count'), [prev, next] = track.parentElement.querySelectorAll('.carousel-btn');
+      const track = document.getElementById('project-track'), carousel = track.parentElement;
+      const slides = [...track.children], nav = carousel.querySelector('.carousel-nav'), dots = carousel.querySelector('.carousel-dots');
+      const count = carousel.querySelector('.carousel-count'), [prev, next] = carousel.querySelectorAll('.carousel-btn');
       const smooth = matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
-      let index = 0;
+      let index = 0, stops = 1;
       slides.forEach((slide, i) => {
         slide.setAttribute('role', 'group');
         slide.setAttribute('aria-roledescription', 'slide');
         slide.setAttribute('aria-label', `${i + 1} of ${slides.length}`);
-        const dot = document.createElement('button');
-        dot.type = 'button';
-        dot.setAttribute('aria-label', `Show ${slide.querySelector('h3').textContent}`);
-        dot.addEventListener('click', () => go(i));
-        dots.append(dot);
       });
-      const go = i => track.scrollTo({ left: slides[Math.max(0, Math.min(i, slides.length - 1))].offsetLeft - slides[0].offsetLeft, behavior: smooth });
+      const step = () => slides.length > 1 ? slides[1].offsetLeft - slides[0].offsetLeft : track.clientWidth;
+      const go = i => track.scrollTo({ left: Math.max(0, Math.min(i, stops - 1)) * step(), behavior: smooth });
       const sync = () => {
-        const step = slides.length > 1 ? slides[1].offsetLeft - slides[0].offsetLeft : 1;
-        index = Math.round(track.scrollLeft / step);
-        slides.forEach((slide, i) => { slide.inert = i !== index; });
+        const s = step(), perView = Math.max(1, Math.round((track.clientWidth + s - slides[0].offsetWidth) / s));
+        stops = Math.max(1, slides.length - perView + 1);
+        index = Math.min(stops - 1, Math.round(track.scrollLeft / s));
+        if (dots.children.length !== stops) {
+          dots.replaceChildren(...Array.from({ length: stops }, (_, i) => {
+            const dot = document.createElement('button');
+            dot.type = 'button';
+            dot.setAttribute('aria-label', `Show ${slides[i].querySelector('h3').textContent}`);
+            dot.addEventListener('click', () => go(i));
+            return dot;
+          }));
+        }
+        slides.forEach((slide, i) => { slide.inert = i < index || i >= index + perView; });
         [...dots.children].forEach((dot, i) => dot.setAttribute('aria-current', i === index));
-        count.textContent = `${index + 1} / ${slides.length}`;
+        count.textContent = `${index + 1} / ${stops}`;
         prev.disabled = index === 0;
-        next.disabled = index === slides.length - 1;
+        next.disabled = index === stops - 1;
+        nav.hidden = stops === 1;
+        track.tabIndex = stops === 1 ? -1 : 0;
       };
       let queued = false;
       track.addEventListener('scroll', () => { if (!queued) { queued = true; requestAnimationFrame(() => { queued = false; sync(); }); } }, { passive: true });
@@ -567,7 +578,7 @@
       track.addEventListener('keydown', e => {
         if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') { e.preventDefault(); go(index + (e.key === 'ArrowRight' ? 1 : -1)); }
       });
-      addEventListener('resize', () => go(index));
+      addEventListener('resize', () => { sync(); go(index); });
       sync();
     })();
 
