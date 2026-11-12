@@ -113,6 +113,7 @@
     .project ul { color: var(--muted); padding-left: 18px; }
     .project li { margin-bottom: 6px; }
     .project .ctas { justify-content: flex-start; margin-top: 6px; }
+    .project + .project { margin-top: 28px; }
 
     .timeline { display: flex; flex-direction: column; gap: 22px; }
     .job { background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 28px; display: grid; grid-template-columns: 180px 1fr; gap: 24px; transition: border-color .2s; }
@@ -377,6 +378,20 @@
       <div class="wrap reveal">
         <span class="eyebrow">Projects</span>
         <h2>Things I've <span class="grad">built lately.</span></h2>
+        <div class="project">
+          <a class="shot" href="https://hitsu-query-lens.vercel.app"><img src="assets/query-lens.webp" alt="QueryLens answering a question about monthly revenue with a line chart" loading="lazy" /></a>
+          <div class="body">
+            <h3>QueryLens</h3>
+            <p>Ask questions about a CSV file in plain English. An AI model writes the SQL, DuckDB runs it, and the answer comes back as a chart, a table or a single number. A companion to DataLens.</p>
+            <ul>
+              <li>Every answer shows its SQL, which you can edit and run again without the AI.</li>
+              <li>The AI sees column names and types, never the data, and queries run in a locked-down DuckDB sandbox.</li>
+              <li>Charts picked from the shape of the result, with a fallback across free Gemini models.</li>
+            </ul>
+            <div class="tags"><span class="tag">Vue 3</span><span class="tag">TypeScript</span><span class="tag">Python</span><span class="tag">FastAPI</span><span class="tag">DuckDB</span><span class="tag">Gemini API</span><span class="tag">Vercel</span></div>
+            <div class="ctas"><a class="btn primary" href="https://hitsu-query-lens.vercel.app">Try the live demo →</a></div>
+          </div>
+        </div>
         <div class="project">
           <a class="shot" href="https://hitsu-data-lens.vercel.app"><img src="assets/data-lens.webp" alt="DataLens results page showing a quality score and detected issues" loading="lazy" /></a>
           <div class="body">
